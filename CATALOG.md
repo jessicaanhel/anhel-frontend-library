@@ -79,6 +79,14 @@ Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only
 | `PhoneFrame` | `anhel-frontend-library/phone-tour` | Phone-shaped frame around a screenshot or any content | `src`, `alt`, `children`, `width`, `aspectRatio`, `renderImage` | portfolio: `.phone` in `styles.css` | in library (0.3.0) |
 | `PhoneTour` | `anhel-frontend-library/phone-tour` | Swipeable row of framed screenshots with captions; arrows on a computer | `screens`, `screenWidth`, `aspectRatio`, `gap`, `edge`, `label`, `renderImage` | portfolio: `index.html`, `styles.css`, `script.js` | in library (0.3.0) |
 
+## Lessons and quizzes
+
+| Name | Import path | What it does | Main props or options | Came from | Status |
+|---|---|---|---|---|---|
+| `Quiz` | `anhel-frontend-library/quiz` | A numbered list of typed and multiple-choice questions with one submit button; answers go to `onSubmit`; with `showResult`, the answers with an expected one are marked right or not (no case, extra spaces ignored) and the score is shown | `questions`, `initialAnswers`, `onSubmit`, `showResult`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `QuizEditor` | `anhel-frontend-library/quiz` | Controlled editor of a quiz's questions: add, change, move, remove (asks first); typed or choice, options, optional expected answer. Reuses `useConfirm` | `value`, `onChange`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `scoreQuiz`, `isAnswerCorrect`, `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions`, `emptyQuizQuestion` | `anhel-frontend-library/quiz` | Pure quiz helpers and the `QuizQuestion` type; open questions (no expected answer) are not counted | `scoreQuiz(questions, answers)` | library (written for 0.5.0) | in library (0.5.0) |
+
 ## Calendar and search
 
 | Name | Import path | What it does | Main props or options | Came from | Status |

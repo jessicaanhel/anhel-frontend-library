@@ -19,6 +19,10 @@ taken from another project. [CATALOG.md](CATALOG.md) lists them.
 - `DrawPad` draws one stroke at a time: while a stroke is going on, a second finger is ignored (before, it started a
   new stroke and the first one was lost), as are the right and middle mouse buttons; a mouse drag no longer selects
   the text around the pad, and a stroke also ends when the browser takes the pointer away.
+- `quiz`: `Quiz` (typed and multiple-choice questions, one submit through `onSubmit`, optional right/wrong marks and
+  a score), `QuizEditor` (controlled editor of the questions) and the pure `scoreQuiz` with `isAnswerCorrect`,
+  `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions` and `emptyQuizQuestion`. Answers are compared without
+  case, with spaces at the ends left out and runs of spaces counted as one.
 ## 0.4.0 (2026-10-22)
 
 The wishlist of the wedding site's planning panel ("Wedding favors"), extracted from `angela-simon-wedding` (branch

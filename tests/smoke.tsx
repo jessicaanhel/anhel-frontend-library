@@ -28,6 +28,8 @@ import {
   PinterestBoard,
   PinterestBoardList,
   PyramidChart,
+  Quiz,
+  QuizEditor,
   RolePreview,
   ScheduleTimeline,
   SearchDialog,
@@ -537,6 +539,26 @@ const panelModel = createPermissionModel<PanelRole>({
   assert.ok(html.includes("Under the account icon"), "extra menu");
   assert.equal(renderToString(<RolePreview roles={[]} menu={[]} />), "", "no roles: nothing");
   results.push("RolePreview ok");
+}
+
+// Quiz: a typed and a choice question, nothing marked before a submit.
+// QuizEditor: a row per question with its controls, options and expected answer.
+{
+  const questions = [
+    { id: "q1", prompt: "What is a pause?", kind: "text" as const, answer: "silence" },
+    { id: "q 2", prompt: "Pick one", kind: "choice" as const, options: ["Yes", "", "No"], answer: "No" },
+  ];
+  const quiz = renderToString(<Quiz questions={questions} initialAnswers={{ q1: "a rest" }} onSubmit={() => {}} showResult texts={{ submit: "Check" }} />);
+  assert.ok(quiz.includes("What is a pause?") && quiz.includes("a rest") && quiz.includes("Check"), "prompt, earlier answer and button");
+  assert.equal(count(quiz, 'type="radio"'), 2, "empty options are left out");
+  assert.ok(!quiz.includes("Not quite") && !quiz.includes(" right"), "no marks before a submit");
+  assert.ok(renderToString(<Quiz questions={[]} onSubmit={() => {}} />).includes("no questions"), "empty quiz");
+
+  const editor = renderToString(<QuizEditor value={questions} onChange={() => {}} />);
+  assert.ok(editor.includes("Question 1") && editor.includes("Question 2") && editor.includes("Add a question"), "rows and the add button");
+  assert.equal(count(editor, 'aria-label="Remove this option"'), 3, "one remove button per option");
+  assert.ok(editor.includes("None (open question)") && editor.includes('value="silence"'), "expected answers");
+  results.push("Quiz + QuizEditor ok");
 }
 
 console.log(results.join("\n"));

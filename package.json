@@ -31,6 +31,7 @@
     "./phone-tour": "./src/components/phone-tour/index.ts",
     "./role-preview": "./src/components/role-preview/index.ts",
     "./wishlist": "./src/components/wishlist/index.ts",
+    "./quiz": "./src/components/quiz/index.ts",
     "./shrink-picture": "./src/shrinkPicture.ts",
     "./use-dismiss": "./src/useDismiss.ts",
     "./permissions": "./src/permissions/index.ts",

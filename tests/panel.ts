@@ -14,6 +14,7 @@ import { buildNotifications, daysUntil } from "../src/components/notifications";
 import { DRAW_HEIGHT, MAX_NOTE_CHARS, cleanNoteDoc, noteFillPercent, noteToPlainText, previewOf, type NoteRecord } from "../src/components/notes-pad";
 import { effectiveGuestCount, perPersonTotal, round2, withPerPersonTotals } from "../src/components/per-person-price";
 import { pyramidLayers } from "../src/components/pyramid-chart";
+import { choiceOptions, emptyQuizQuestion, normaliseAnswer, scoreQuiz, type QuizQuestion } from "../src/components/quiz";
 import { roleCanOpen, type RolePreviewRole } from "../src/components/role-preview";
 import { searchSections } from "../src/components/search-dialog";
 import type { Task } from "../src/components/task-list";
@@ -1042,6 +1043,27 @@ const model = createPermissionModel<Role>({
   assert.equal((await handlers.DELETE(asPerson("mentor", ["admin"], { id: first.grant.id }, "DELETE"))).status, 200);
   assert.equal((await storage.loadAll()).length, 2);
   results.push("grant handlers ok");
+}
+
+// ---- quiz scoring -----------------------------------------------------------------------------------------------------------
+
+{
+  const questions: QuizQuestion[] = [
+    { id: "q1", prompt: "Capital of Ukraine?", kind: "text", answer: "Київ" },
+    { id: "q2", prompt: "2 + 2?", kind: "choice", options: ["3", "4", ""], answer: "4" },
+    { id: "q3", prompt: "What did you learn?", kind: "text" },
+    { id: "q4", prompt: "Say hello", kind: "text", answer: "Good  Morning" },
+    { id: "q5", prompt: "Blank expected", kind: "text", answer: "   " },
+  ];
+  const score = scoreQuiz(questions, { q1: "  київ ", q2: "3", q3: "a lot", q4: "good\nmorning" });
+  assert.deepEqual(score, { correct: 2, total: 3, results: { q1: true, q2: false, q3: null, q4: true, q5: null } }, "case and spaces ignored; open questions not counted");
+  assert.equal(scoreQuiz(questions, {}).correct, 0, "no answers: nothing right");
+  assert.deepEqual(scoreQuiz([], {}), { correct: 0, total: 0, results: {} });
+  assert.equal(normaliseAnswer("  Ї\tЖАК  "), "ї жак");
+  assert.equal(normaliseAnswer("é"), normaliseAnswer("é"), "an accent typed separately counts as the same letter");
+  assert.deepEqual(choiceOptions(questions[1]), ["3", "4"], "empty options are not shown");
+  assert.deepEqual(emptyQuizQuestion("choice").options, ["", ""]);
+  results.push("quiz scoring ok");
 }
 
 console.log(results.join("\n"));

@@ -31,6 +31,7 @@ Everything in the library, with import paths, origins and status, is listed in
 | [`PhoneFrame`, `PhoneTour`, `RolePreview`](#phoneframe-phonetour-and-rolepreview) | the portfolio page's phones, screenshot tour and "Log in as" | A phone frame, a swipeable screenshot row, and a role-by-role menu preview | React 18+ |
 | [`shrinkPicture`, `useDismiss`](#utilities) | the notes and board pictures; the panel's dropdowns | Picture shrinking in the browser; closing a dropdown on an outside click | React 18+ |
 | [Grants](#grants) | not on the wedding site (written for 0.5.0, for a members' area) | Per-person access to a course or lesson with an optional deadline, and its endpoint | Node 18+ |
+| [`Quiz`, `QuizEditor`](#quiz-and-quizeditor) | not on the wedding site (written for 0.5.0, for a members' area) | A quiz to fill in with optional right/wrong marks, and the editor of its questions | React 18+ |
 | [`tools/cut-frame-interior.mjs`](#toolscut-frame-interiormjs) | the cutting of the floral frame's inside for that photo slider | Cuts a frame image's solid inside to transparent and suggests the matching clip-path | Node 18+, ffmpeg |
 
 All of them were extracted from the `angela-simon-wedding` site (Next.js 16,
@@ -98,6 +99,7 @@ and is not re-exported from the root:
 | `anhel-frontend-library/board-overview` | `BoardOverview`, `DEFAULT_BOARD_ITEM_TYPES`, `groupItemsByCategory`, `categoriesOf`, `linkSource`, `formatItemDate`, `emptyBoardItem` |
 | `anhel-frontend-library/link-chips` | `LinkChips`, `asWebAddress`, `hostOf`, `addLink` |
 | `anhel-frontend-library/per-person-price` | `PerPersonPrice`, `round2`, `perPersonTotal`, `effectiveGuestCount`, `withPerPersonTotals` |
+| `anhel-frontend-library/quiz` | `Quiz`, `QuizEditor`, `scoreQuiz`, `isAnswerCorrect`, `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions`, `emptyQuizQuestion`, the question and answer types |
 | `anhel-frontend-library/wishlist` | `Wishlist`, `WISHLIST_LIMITS`, `emptyWishlistItem`, `fillFromPreview`, `itemsOfCategory`, `prepareWishlistItem`, the item, category and preview types |
 | `anhel-frontend-library/grouped-nav` | `GroupedNav`, `visibleNavTree`, `firstNavPage`, `navPageTitle`, `allNavPages` |
 | `anhel-frontend-library/trash-panel` | `TrashPanel`, `trashDaysLeft` |
@@ -1185,6 +1187,36 @@ changed, not a second one; a deadline that is not a real date is a 400),
 logs), `history`, `today` (default: the date in UTC), `messages`, `logError`.
 For Google Sheets, `grantSheetTable(tab = "Grants")` has the columns
 `Username, Key, Expires, Granted by, Created, ID`.
+
+### Quiz and QuizEditor
+
+`"use client"`. A question is `{ id, prompt, kind: "text" | "choice", options?,
+answer? }`; `answer` is the expected answer, left out for an open question.
+`Quiz` shows the questions as a numbered list (a text field, or one radio button
+per option; empty options are left out) and hands every answer, by question id,
+to `onSubmit` (throw an `Error` to show its message). With `showResult`, a
+successful submit marks the questions that have an expected answer as right or
+not and shows "3 of 4 right"; changing an answer takes the marks away again.
+
+| Prop | Type | Default |
+|---|---|---|
+| `questions` | `QuizQuestion[]` | required |
+| `initialAnswers` | `Record<string, string>` by question id | `{}` |
+| `onSubmit` | `(answers) => Promise<void> \| void` | required |
+| `showResult` | `boolean` | `false` |
+| `texts` | every label (see `QuizTexts`) | English defaults |
+| `className` | `string` | none |
+
+`QuizEditor` is controlled (`value`, `onChange`, `texts`, `className`): add,
+change, move and remove questions (removing a filled-in one asks first), switch
+between typed and choice, edit the options and pick the expected answer.
+Renaming the option that is the expected answer renames the answer too.
+
+`scoreQuiz(questions, answers)` returns `{ correct, total, results }`: `total`
+counts the questions with an expected answer, `results[id]` is `true`, `false`
+or `null` (open question). Answers are compared with `normaliseAnswer`: no
+case, no spaces at the ends, runs of spaces and line breaks as one space. The
+same function on the server gives the same score.
 
 ## tools/cut-frame-interior.mjs
 

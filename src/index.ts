@@ -20,6 +20,7 @@ export * from "./components/trash-panel";
 export * from "./components/phone-tour";
 export * from "./components/role-preview";
 export * from "./components/wishlist";
+export * from "./components/quiz";
 export { shrinkPicture, scaledSize, nextAttempt } from "./shrinkPicture";
 export type { ShrinkPictureOptions } from "./shrinkPicture";
 export { useDismiss } from "./useDismiss";
