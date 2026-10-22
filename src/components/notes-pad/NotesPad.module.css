@@ -238,6 +238,8 @@
   border: 0;
   background: transparent;
   color: var(--ink, #2d302b);
+  /* A textarea does not take the page's font by itself (often monospace). */
+  font-family: inherit;
   font-size: 15px;
   line-height: 1.6;
   outline: 0;

@@ -103,8 +103,9 @@ export default function Quiz({ questions, initialAnswers = {}, onSubmit, showRes
 
               {question.kind === "choice" ? (
                 <div className={styles.options} role="radiogroup" aria-labelledby={promptId}>
-                  {choiceOptions(question).map((option) => (
-                    <label className={styles.option} key={option}>
+                  {choiceOptions(question).map((option, optionIndex) => (
+                    // By position: two options may have the same text.
+                    <label className={styles.option} key={optionIndex}>
                       <input
                         type="radio"
                         name={`${formId}-answer-${index}`}
