@@ -41,6 +41,7 @@
     "./server/calendar": "./src/server/calendar/index.ts",
     "./server/link-preview": "./src/server/link-preview/index.ts",
     "./server/wishlist": "./src/server/wishlist/index.ts",
+    "./server/grants": "./src/server/grants/index.ts",
     "./server/storage": "./src/server/storage/index.ts",
     "./server/storage/google-sheets": "./src/server/storage/google-sheets.ts",
     "./server/storage/dynamodb": "./src/server/storage/dynamodb.ts",

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 (2026-10-22)
+
+Pieces for a members' area (lessons, videos, notes and quizzes behind a login), written for the library rather than
+taken from another project. [CATALOG.md](CATALOG.md) lists them.
+
+- `server/grants`: per-person access to one key with an optional deadline, on top of the roles. The pure helpers
+  `isGrantActive`, `activeGrantsFor`, `hasGrant`, `daysLeft` and `isGrantDate` (the deadline day is still active; a
+  deadline that is not a date counts as expired), and `createGrantHandlers` (GET, POST, DELETE; only managers see
+  every grant and change them). `grantSheetTable` is the Google Sheets layout (`Username, Key, Expires, Granted by,
+  Created, ID`).
 ## 0.4.0 (2026-10-22)
 
 The wishlist of the wedding site's planning panel ("Wedding favors"), extracted from `angela-simon-wedding` (branch

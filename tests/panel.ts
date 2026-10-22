@@ -24,10 +24,11 @@ import { nextAttempt, scaledSize } from "../src/shrinkPicture";
 import { createAccountHandlers, createPermissionsHandlers, type AccountRecord } from "../src/server/accounts";
 import { buildCalendar, createCalendarFeed, escapeIcsText, foldIcsLine, taskCalendarEvents } from "../src/server/calendar";
 import { cleanBoardItem, createBoardItemHandlers, createTrash, createTrashHandlers, type TrashEntry } from "../src/server/lists";
+import { activeGrantsFor, createGrantHandlers, daysLeft, hasGrant, isGrantActive, isGrantDate, type Grant } from "../src/server/grants";
 import { fetchLinkPreview, isPrivateAddress, parsePreview } from "../src/server/link-preview";
 import { createNotesHandlers } from "../src/server/notes";
 import { createMemoryStorage } from "../src/server/storage";
-import { accountSheetTable, boardItemSheetTable, noteSheetTable, wishlistSheetTable } from "../src/server/storage/google-sheets";
+import { accountSheetTable, boardItemSheetTable, grantSheetTable, noteSheetTable, wishlistSheetTable } from "../src/server/storage/google-sheets";
 import { cleanWishlistItem, createWishlistHandlers } from "../src/server/wishlist";
 
 const results: string[] = [];
@@ -965,6 +966,82 @@ const model = createPermissionModel<Role>({
   assert.deepEqual(samLines, ["Edited “Candle”: price → €5", "Added “Napkins” to the Guests favors"]);
   assert.deepEqual((await history.readForUser("vera", 5)).map((event) => event.text), ["Removed “Photo album” from the Family favors"]);
   results.push("wishlist handlers ok");
+}
+
+// ---- grants (per-person access with a deadline) ------------------------------------------------------------------------------
+
+{
+  const grant = (id: string, username: string, key: string, expiresAt: string): Grant => ({ id, username, key, expiresAt, grantedBy: "mentor", createdAt: "2026-10-01T00:00:00.000Z" });
+  const forever = grant("g1", "Vera", "course-1", "");
+  const untilFirst = grant("g2", "vera", "course-2", "2026-12-01");
+  const typo = grant("g3", "vera", "course-3", "soon");
+  const someoneElse = grant("g4", "sam", "course-1", "2026-12-31");
+  const all = [forever, untilFirst, typo, someoneElse];
+
+  assert.ok(isGrantDate("2026-02-28") && !isGrantDate("2026-02-30") && !isGrantDate("1 Dec 2026") && !isGrantDate(""));
+  assert.ok(isGrantActive(forever, "2099-01-01"), "no deadline: always active");
+  assert.ok(isGrantActive(untilFirst, "2026-12-01"), "the deadline day itself is still active");
+  assert.ok(!isGrantActive(untilFirst, "2026-12-02"), "the day after: expired");
+  assert.ok(!isGrantActive(typo, "2000-01-01"), "a deadline that is not a date counts as expired");
+
+  assert.deepEqual(activeGrantsFor(all, "VERA", "2026-11-15").map((item) => item.id), ["g1", "g2"], "own active grants, username in any case");
+  assert.deepEqual(activeGrantsFor(all, "vera", "2026-12-02").map((item) => item.id), ["g1"]);
+  assert.ok(hasGrant(all, "vera", "course-2", "2026-12-01"));
+  assert.ok(!hasGrant(all, "vera", "course-2", "2026-12-02"));
+  assert.ok(!hasGrant(all, "vera", "course-3", "2026-01-01"));
+  assert.ok(!hasGrant(all, "sam", "course-2", "2026-11-01"), "another person's key does not count");
+
+  assert.equal(daysLeft(forever, "2026-11-01"), null, "no deadline: null");
+  assert.equal(daysLeft(untilFirst, "2026-12-01"), 1, "the last day counts as one");
+  assert.equal(daysLeft(untilFirst, "2026-11-29"), 3);
+  assert.equal(daysLeft(untilFirst, "2026-12-05"), 0, "expired: 0");
+  assert.equal(daysLeft(grant("g5", "a", "b", "2027-04-01"), "2027-03-20"), 13, "across a daylight saving change");
+
+  const sheet = grantSheetTable();
+  assert.deepEqual(sheet.headers, ["Username", "Key", "Expires", "Granted by", "Created", "ID"]);
+  assert.deepEqual(sheet.fromRow(sheet.toRow(untilFirst).map(String)), untilFirst, "a grant round-trips");
+  assert.equal(sheet.fromRow(["vera", "k", ""]).expiresAt, "", "an empty cell: no deadline");
+  assert.equal(sheet.fromRow(["vera", "k", "next week"]).expiresAt, "next week", "an unreadable deadline is kept, and so counts as expired");
+  results.push("grant helpers ok");
+}
+
+{
+  const storage = createMemoryStorage().list<Grant>("grants");
+  let day = "2026-11-30";
+  const handlers = createGrantHandlers({
+    storage,
+    getSession: fakeSession,
+    canManage: (session) => session.roles.includes("admin"),
+    today: () => day,
+    logError: () => undefined,
+  });
+  const give = (who: string, roles: string[], body: unknown) => handlers.POST(asPerson(who, roles, body, "POST"));
+  const listFor = async (who: string, roles: string[]) => ((await (await handlers.GET(asPerson(who, roles))).json()) as { grants: Grant[] }).grants;
+
+  assert.equal((await handlers.GET(new Request("http://localhost/api/x"))).status, 401, "signed out: 401");
+  assert.equal((await give("vera", ["member"], { username: "vera", key: "course-1", expiresAt: "" })).status, 403, "a member cannot give access");
+  assert.equal((await give("mentor", ["admin"], { username: "vera", key: "course-1", expiresAt: "2026-02-30" })).status, 400, "not a real date");
+  assert.equal((await give("mentor", ["admin"], { username: "", key: "course-1", expiresAt: "" })).status, 400, "no username");
+
+  const first = (await (await give("mentor", ["admin"], { username: "vera", key: "course-1", expiresAt: "2026-12-01" })).json()) as { grant: Grant };
+  assert.equal(first.grant.grantedBy, "mentor");
+  await give("mentor", ["admin"], { username: "vera", key: "course-2", expiresAt: "" });
+  await give("mentor", ["admin"], { username: "sam", key: "course-1", expiresAt: "2026-11-01" });
+  const again = (await (await give("mentor", ["admin"], { username: "Vera", key: "course-1", expiresAt: "2026-12-15" })).json()) as { grant: Grant; grants: Grant[] };
+  assert.equal(again.grant.id, first.grant.id, "the same person and key: the grant is changed, not doubled");
+  assert.equal(again.grants.length, 3);
+
+  assert.equal((await listFor("mentor", ["admin"])).length, 3, "a manager sees every grant");
+  assert.deepEqual((await listFor("vera", ["member"])).map((item) => item.key).sort(), ["course-1", "course-2"], "a member sees their own");
+  assert.deepEqual(await listFor("sam", ["member"]), [], "an expired grant is not listed for its person");
+  day = "2026-12-16";
+  assert.deepEqual((await listFor("vera", ["member"])).map((item) => item.key), ["course-2"], "after the deadline only the grant without one is left");
+
+  assert.equal((await handlers.DELETE(asPerson("vera", ["member"], { id: first.grant.id }, "DELETE"))).status, 403);
+  assert.equal((await handlers.DELETE(asPerson("mentor", ["admin"], { id: "nope" }, "DELETE"))).status, 404);
+  assert.equal((await handlers.DELETE(asPerson("mentor", ["admin"], { id: first.grant.id }, "DELETE"))).status, 200);
+  assert.equal((await storage.loadAll()).length, 2);
+  results.push("grant handlers ok");
 }
 
 console.log(results.join("\n"));

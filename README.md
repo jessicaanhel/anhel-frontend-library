@@ -30,6 +30,7 @@ Everything in the library, with import paths, origins and status, is listed in
 | [`TrashPanel`](#trashpanel) | the panel's Trash page | What was removed, with restore and delete for good | React 18+; server part: Node 18+ |
 | [`PhoneFrame`, `PhoneTour`, `RolePreview`](#phoneframe-phonetour-and-rolepreview) | the portfolio page's phones, screenshot tour and "Log in as" | A phone frame, a swipeable screenshot row, and a role-by-role menu preview | React 18+ |
 | [`shrinkPicture`, `useDismiss`](#utilities) | the notes and board pictures; the panel's dropdowns | Picture shrinking in the browser; closing a dropdown on an outside click | React 18+ |
+| [Grants](#grants) | not on the wedding site (written for 0.5.0, for a members' area) | Per-person access to a course or lesson with an optional deadline, and its endpoint | Node 18+ |
 | [`tools/cut-frame-interior.mjs`](#toolscut-frame-interiormjs) | the cutting of the floral frame's inside for that photo slider | Cuts a frame image's solid inside to transparent and suggests the matching clip-path | Node 18+, ffmpeg |
 
 All of them were extracted from the `angela-simon-wedding` site (Next.js 16,
@@ -111,9 +112,10 @@ and is not re-exported from the root:
 | `anhel-frontend-library/server/accounts` | `createAccountHandlers`, `createPermissionsHandlers`, the `AccountRecord` type |
 | `anhel-frontend-library/server/link-preview` | `fetchLinkPreview`, `parsePreview`, `isPrivateAddress`, the `LinkPreview` type |
 | `anhel-frontend-library/server/wishlist` | `createWishlistHandlers`, `cleanWishlistItem` |
+| `anhel-frontend-library/server/grants` | `createGrantHandlers`, `isGrantActive`, `activeGrantsFor`, `hasGrant`, `daysLeft`, `isGrantDate`, the `Grant` type |
 | `anhel-frontend-library/server/calendar` | `createCalendarFeed`, `buildCalendar`, `taskCalendarEvents`, `escapeIcsText`, `foldIcsLine` |
 | `anhel-frontend-library/server/storage` | `ListStorage`/`HistoryStorage`/`StorageBackend` types, `createMemoryStorage`, `createJsonFileStorage`, `selectStorage`, `newId` |
-| `anhel-frontend-library/server/storage/google-sheets` | `createSheetsStorage`, `taskSheetTable`, `trashSheetTable`, `historySheetTable`, `noteSheetTable`, `boardItemSheetTable`, `accountSheetTable`, `wishlistSheetTable`, `cell`, `isYes`, `toNumber` |
+| `anhel-frontend-library/server/storage/google-sheets` | `createSheetsStorage`, `taskSheetTable`, `trashSheetTable`, `historySheetTable`, `noteSheetTable`, `boardItemSheetTable`, `accountSheetTable`, `wishlistSheetTable`, `grantSheetTable`, `cell`, `isYes`, `toNumber` |
 | `anhel-frontend-library/server/storage/dynamodb` | `createDynamoDbStorage` (needs the two `@aws-sdk` packages, optional peer dependencies) |
 
 The server code returns plain web `Response` objects and reads cookies from a
@@ -1114,6 +1116,56 @@ export async function POST(request: Request) {
 
 The route decides who may use it. The name lookup and the request are two steps,
 so an address that changes between them is not caught.
+
+## Members' area pieces (0.5.0)
+
+Added in 0.5.0 for a members' area: lessons and videos behind a login, notes
+and quizzes. Written for the library, not taken from another project.
+
+### Grants
+
+Server-safe, no React (`anhel-frontend-library/server/grants`). A role says
+what a group of people may open; a grant gives one person one extra key (a
+course, a lesson) until a date. A grant is
+`{ id, username, key, expiresAt, grantedBy, createdAt }`, where `expiresAt` is
+`YYYY-MM-DD` or `""` for no deadline. The deadline day is still active, and a
+deadline that is not a valid date counts as expired (a typo in a spreadsheet
+must never mean "forever"). Usernames are compared without case, keys exactly.
+
+```ts
+import { hasGrant, type Grant } from "anhel-frontend-library/server/grants";
+
+const grants = await storage.list<Grant>("grants").loadAll();
+if (!hasGrant(grants, session.username, "course-1", today)) return notFound();
+```
+
+`isGrantActive(grant, today)`, `activeGrantsFor(grants, username, today)`,
+`hasGrant(grants, username, key, today)`, `daysLeft(grant, today)` (days the
+grant still opens, today included: `1` on the last day, `0` once expired,
+`null` without a deadline) and `isGrantDate(value)`. `today` is always passed in
+as `YYYY-MM-DD`, so the app decides the time zone.
+
+```ts
+// app/api/grants/route.ts (server)
+import { createGrantHandlers, type Grant } from "anhel-frontend-library/server/grants";
+
+export const { GET, POST, DELETE } = createGrantHandlers({
+  storage: storage.list<Grant>("grants"),
+  getSession: (request) => auth.getSession(request),
+  canManage: (session) => session.roles.includes("admin"),
+  history: storage.history(),
+});
+```
+
+`GET -> { grants }` (every grant for a manager; anyone else gets only their own
+grants that are active today), `POST { username, key, expiresAt } -> { grant,
+grants }` (managers only; a person who already has the key gets their grant
+changed, not a second one; a deadline that is not a real date is a 400),
+`DELETE { id } -> { ok, grants }` (managers only). Options: `storage`,
+`getSession`, `canManage`, `listName` (`"access"`, used in history lines and
+logs), `history`, `today` (default: the date in UTC), `messages`, `logError`.
+For Google Sheets, `grantSheetTable(tab = "Grants")` has the columns
+`Username, Key, Expires, Granted by, Created, ID`.
 
 ## tools/cut-frame-interior.mjs
 

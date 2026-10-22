@@ -3,6 +3,8 @@ import type { NoteRecord } from "../../components/notes-pad/notes";
 import type { WishlistItem } from "../../components/wishlist/wishlistItems";
 import type { Task } from "../../components/task-list/task";
 import type { AccountRecord } from "../accounts/handlers";
+import type { Grant } from "../grants/grants";
+import { isoDate } from "../lists/clean";
 import type { TrashEntry } from "../lists/trash";
 import type { HistoryEvent } from "./types";
 
@@ -204,5 +206,28 @@ export function wishlistSheetTable(tab = "Wishlist", categoryKeys: string[] = []
       };
     },
     toRow: (item) => [item.category, item.title, item.description, item.link, item.price, item.image, item.id],
+  };
+}
+
+// Per-person access with a deadline (see server/grants), one row per grant.
+// A deadline typed by hand ("1 Dec 2026") reads as YYYY-MM-DD. One that can't
+// be read as a date is kept as typed, so the grant counts as expired: an empty
+// cell means "no deadline", and a typo must not turn into that.
+export function grantSheetTable(tab = "Grants"): SheetTable<Grant> {
+  return {
+    tab,
+    headers: ["Username", "Key", "Expires", "Granted by", "Created", "ID"],
+    fromRow: (row) => {
+      const typed = cell(row, 2);
+      return {
+        username: cell(row, 0),
+        key: cell(row, 1),
+        expiresAt: typed === "" ? "" : isoDate(typed) || typed,
+        grantedBy: cell(row, 3),
+        createdAt: cell(row, 4),
+        id: cell(row, 5),
+      };
+    },
+    toRow: (grant) => [grant.username, grant.key, grant.expiresAt, grant.grantedBy, grant.createdAt, grant.id],
   };
 }
