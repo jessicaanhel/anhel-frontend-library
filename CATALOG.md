@@ -1,20 +1,21 @@
 Check this file before building anything new.
 
-Everything in the library, by area: the components, hooks, helpers and server utilities of version 0.4.0.
+Everything in the library, by area: the components, hooks, helpers and server utilities of version 0.5.0.
 Import paths start with `anhel-frontend-library`; every browser-safe export is also available from the package root.
 Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only available from its own `server/...` path.
 
 **Status**
 
 - `in library`: it is in the library as it was added.
-- `extended`: it was in the library before and was extended or fixed when the 0.3.0 or 0.4.0 pieces were added.
+- `extended`: it was in the library before and was extended or fixed when the 0.3.0, 0.4.0 or 0.5.0 pieces were added.
 - `not extracted`: it exists in the source projects and is not in the library (see the last section).
 
 **Source projects**
 
 - `wedding`: `angela-simon-wedding` (the wedding site and its planning panel).
 - `portfolio`: `wedding-panel-portfolio` (the static portfolio page of that project).
-- Versions: 0.1.0, 0.2.0 and 0.3.0 are the earlier extractions, 0.4.0 is the latest.
+- `library`: written for the library itself, not taken from a project (the 0.5.0 members' area pieces).
+- Versions: 0.1.0, 0.2.0, 0.3.0 and 0.4.0 are the earlier extractions, 0.5.0 is the latest.
 
 ## Login and permissions
 

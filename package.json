@@ -1,6 +1,6 @@
 {
   "name": "anhel-frontend-library",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Reusable React components (TypeScript + CSS modules), shipped as source.",
   "type": "module",

@@ -27,6 +27,13 @@ taken from another project. [CATALOG.md](CATALOG.md) lists them.
   the video has to be "unlisted" on YouTube, because a private video plays for nobody else), `LessonPlaylist` (the
   videos and readings of a course for a column next to the player, keyboard friendly) and the pure `youtubeIdFrom`
   and `youtubeEmbedUrl`. Two icons were added for the playlist (`Play`, `BookOpen`).
+
+Also changed:
+
+- The text fields of a note use the page's font (a textarea does not take it by itself, so they were often
+  monospace).
+- New entry points: `server/grants`, `quiz` and `youtube-lesson`; `notes-pad` also exports `NoteEditor` and
+  `NoteView`, and `server/storage/google-sheets` exports `grantSheetTable`.
 ## 0.4.0 (2026-10-22)
 
 The wishlist of the wedding site's planning panel ("Wedding favors"), extracted from `angela-simon-wedding` (branch

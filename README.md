@@ -1295,13 +1295,14 @@ npm run check      # tsc --noEmit + the tests below
 - `tests/smoke.tsx`: server-renders every component once;
 - `tests/server.ts`: permissions, login and sessions, the list handlers with
   history and trash, and the task, Pinterest and Figma helpers;
-- `tests/panel.ts`: the 0.3.0 and 0.4.0 logic: notes (the document check and the
+- `tests/panel.ts`: the 0.3.0, 0.4.0 and 0.5.0 logic: notes (the document check and the
   handlers), picture sizes, the pyramid layers, the month calendar, search,
   notifications, per-person prices, links, the menu tree, the calendar feed and
   its token, the account and permission rules, the trash and board item
   handlers, the link preview (address table, refused addresses, page parsing;
   never the real network), the wishlist helpers and handlers (who sees which
-  category), and the Google Sheets layouts of the new lists;
+  category), the grants (deadlines, the endpoint), quiz scoring, YouTube links,
+  and the Google Sheets layouts of the new lists;
 - `tests/storage-contract.ts`: the same storage contract on every backend
   (memory, JSON file, Google Sheets with a fake client, DynamoDB with a fake
   client in both key layouts), and the notes, board item, account and wishlist
