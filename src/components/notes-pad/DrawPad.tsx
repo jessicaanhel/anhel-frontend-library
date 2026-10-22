@@ -113,6 +113,12 @@ export default function DrawPad({ strokes, onChange, colours = DEFAULT_PEN_COLOU
 
   function start(event: ReactPointerEvent<HTMLCanvasElement>) {
     if (!drawing) return;
+    // One stroke at a time: a second finger (or a palm) on the pad is ignored,
+    // and so are the right and middle mouse buttons.
+    if (current.current || !event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+    // Keeps a mouse drag from selecting the text around the pad.
+    event.preventDefault();
+    // The stroke keeps coming here when the pointer leaves the pad.
     event.currentTarget.setPointerCapture(event.pointerId);
     current.current = { c: colour, w: erasing ? size * 2 : size, ...(erasing ? { e: 1 as const } : {}), p: position(event) };
     redraw(current.current);
@@ -120,7 +126,7 @@ export default function DrawPad({ strokes, onChange, colours = DEFAULT_PEN_COLOU
 
   function move(event: ReactPointerEvent<HTMLCanvasElement>) {
     const stroke = current.current;
-    if (!stroke) return;
+    if (!stroke || !event.isPrimary) return;
     const [x, y] = position(event);
     const last = stroke.p.length;
     // Skip points that barely moved: keeps the saved drawing small.
@@ -129,7 +135,8 @@ export default function DrawPad({ strokes, onChange, colours = DEFAULT_PEN_COLOU
     redraw(stroke);
   }
 
-  function end() {
+  function end(event: ReactPointerEvent<HTMLCanvasElement>) {
+    if (!event.isPrimary) return;
     const stroke = current.current;
     current.current = null;
     if (stroke) onChange([...strokes, stroke]);
@@ -183,6 +190,8 @@ export default function DrawPad({ strokes, onChange, colours = DEFAULT_PEN_COLOU
         onPointerMove={move}
         onPointerUp={end}
         onPointerCancel={end}
+        // Losing the capture (the browser took over the touch) ends the stroke too.
+        onLostPointerCapture={end}
       />
     </div>
   );

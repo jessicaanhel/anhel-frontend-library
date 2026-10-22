@@ -1,4 +1,4 @@
-/* Shared by NotesPad and DrawPad. */
+/* Shared by NotesPad, NoteEditor, NoteView and DrawPad. */
 
 .pad {
   padding: 22px;
@@ -436,4 +436,47 @@
 .drawCanvas.active {
   touch-action: none;
   cursor: crosshair;
+}
+
+/* ---- read-only note (NoteView) ---- */
+
+.view {
+  padding: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  color: var(--ink, #2d302b);
+}
+
+.viewTitle {
+  margin: 0 0 8px;
+  font-family: var(--font-display, inherit);
+  font-size: 30px;
+  font-weight: 400;
+}
+
+/* The same type as the editor's text field; line breaks are kept. */
+.viewText {
+  margin: 0;
+  padding: 4px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.viewEmpty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft, #83867d);
+}
+
+/* A drawing at the pad's own 1000 x 600 shape, framed like the pad. */
+.drawingView {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1000 / 600;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
 }

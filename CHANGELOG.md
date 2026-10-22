@@ -10,6 +10,15 @@ taken from another project. [CATALOG.md](CATALOG.md) lists them.
   deadline that is not a date counts as expired), and `createGrantHandlers` (GET, POST, DELETE; only managers see
   every grant and change them). `grantSheetTable` is the Google Sheets layout (`Username, Key, Expires, Granted by,
   Created, ID`).
+- `NoteView` (in `notes-pad`): a note document shown read-only, styled like `NotesPad`. Text keeps its line breaks,
+  drawings are drawn as SVG from the saved strokes (an eraser stroke becomes a mask over what was drawn before it,
+  like on the canvas), pictures and stickers are shown, empty text blocks and empty drawings are left out.
+- `NoteEditor` (in `notes-pad`): the block editor of `NotesPad` taken out as its own controlled component
+  (`value`, `onChange`; no title, colour, list or endpoint), so a page can put one note under a video and save it
+  itself. `NotesPad` now uses it; its behaviour is the same, except that a save error is shown above the blocks.
+- `DrawPad` draws one stroke at a time: while a stroke is going on, a second finger is ignored (before, it started a
+  new stroke and the first one was lost), as are the right and middle mouse buttons; a mouse drag no longer selects
+  the text around the pad, and a stroke also ends when the browser takes the pointer away.
 ## 0.4.0 (2026-10-22)
 
 The wishlist of the wedding site's planning panel ("Wedding favors"), extracted from `angela-simon-wedding` (branch

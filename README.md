@@ -16,7 +16,7 @@ Everything in the library, with import paths, origins and status, is listed in
 | [Task storage](#task-storage) | the panel's Google Sheet (and the local JSON file) | One storage contract with memory, JSON file, Google Sheets and DynamoDB backends, picked by a setting | Node 18+; Sheets: a googleapis client; DynamoDB: `@aws-sdk/client-dynamodb` + `@aws-sdk/lib-dynamodb` |
 | [`PinterestBoardList`, `PinterestBoard`](#pinterestboardlist) | the panel's Inspiration pages | Public Pinterest boards added by link, with tags and a tag filter; full board links are embedded live | React 18+ |
 | [`FigmaBoard`](#figmaboard) | the panel's Mind Board page | A shared Figma / FigJam file embedded, with an "Open in Figma" link | React 18+ |
-| [`NotesPad`, `DrawPad`](#notespad) | the Notes of the private Bride and Groom boards | Notes with text, a drawing pad, pictures and stickers, saved by itself; the matching notes endpoint | React 18+; server part: Node 18+ |
+| [`NotesPad`, `NoteEditor`, `NoteView`, `DrawPad`](#notespad) | the Notes of the private Bride and Groom boards (`NoteEditor` and `NoteView` written for 0.5.0) | Notes with text, a drawing pad, pictures and stickers, saved by itself; one note's editor on its own; a read-only note; the matching notes endpoint | React 18+; server part: Node 18+ |
 | [`PyramidChart`](#pyramidchart) | the budget pyramid | A pyramid with one layer per label, sliced by area, with a legend and an optional switch between views | React 18+ |
 | [`MiniCalendar`](#minicalendar) | the calendar in the panel's right column | A month view with dotted days and a red round count badge per day | React 18+ |
 | [`SearchDialog`, `useSearchShortcut`](#searchdialog) | "Search anything" (Ctrl/⌘ K) | One search box over sections of results that are passed in | React 18+ |
@@ -89,7 +89,7 @@ and is not re-exported from the root:
 | `anhel-frontend-library/confirm-dialog` | `useConfirm` (the "Are you sure?" dialog the lists use) |
 | `anhel-frontend-library/pinterest-boards` | `PinterestBoardList`, `PinterestBoard`, `cleanBoard`, `cleanTags`, `isEmbeddableBoard`, `pinterestLink`, `tagCounts`, `boardsWithTag` |
 | `anhel-frontend-library/figma-board` | `FigmaBoard`, `isFigmaLink`, `figmaEmbedUrl` |
-| `anhel-frontend-library/notes-pad` | `NotesPad`, `DrawPad`, `cleanNoteDoc`, `previewOf`, `noteToPlainText`, `noteFillPercent`, the note types and constants |
+| `anhel-frontend-library/notes-pad` | `NotesPad`, `NoteEditor`, `NoteView`, `DrawPad`, `cleanNoteDoc`, `previewOf`, `noteToPlainText`, `noteFillPercent`, the note types and constants |
 | `anhel-frontend-library/pyramid-chart` | `PyramidChart`, `pyramidLayers` |
 | `anhel-frontend-library/mini-calendar` | `MiniCalendar`, `monthCells`, `weekdayLabels` |
 | `anhel-frontend-library/search-dialog` | `SearchDialog`, `useSearchShortcut`, `searchSections` |
@@ -710,6 +710,25 @@ needed there (on the editor and the handlers alike). For Google Sheets,
 Pure helpers: `cleanNoteDoc(input, { maxChars, maxBlocks })` (checks a document
 from the browser and returns a clean copy or `null`), `previewOf`,
 `noteToPlainText`, `noteFillPercent`.
+
+**`NoteEditor`** (0.5.0, `"use client"`) is the block editor of `NotesPad` on its
+own: controlled (`value: NoteDoc`, `onChange(doc)`), without a title, colour,
+list or endpoint, so a page can put one note under a video and save it itself.
+Props: `value`, `onChange`, `stickers`, `maxChars`, `texts`, `drawTexts`,
+`className`.
+
+**`NoteView`** (0.5.0) shows a `NoteDoc` read-only, with the same paper and type:
+text with its line breaks, drawings as SVG from the strokes (the pad's 1000 x
+600 shape, sharp at any width), pictures and stickers; no buttons or fields.
+Props: `value`, `title`, `colour` (paper, default the first of `NOTE_COLOURS`),
+`texts` (`empty`, `drawing`), `className`. It has no state, so it also renders
+in a server component.
+
+```tsx
+const [doc, setDoc] = useState<NoteDoc>({ blocks: [] });
+<NoteEditor value={doc} onChange={(next) => { setDoc(next); saveLater(next); }} />
+<NoteView value={mentorNote} title="Homework" />
+```
 
 ### PyramidChart
 
