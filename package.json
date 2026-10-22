@@ -1,0 +1,86 @@
+{
+  "name": "anhel-frontend-library",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Reusable React components (TypeScript + CSS modules), shipped as source.",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./video-entry": "./src/components/video-entry/index.ts",
+    "./framed-photo-stack": "./src/components/framed-photo-stack/index.ts",
+    "./schedule-timeline": "./src/components/schedule-timeline/index.ts",
+    "./login-form": "./src/components/login-form/index.ts",
+    "./task-list": "./src/components/task-list/index.ts",
+    "./confirm-dialog": "./src/components/confirm-dialog/index.ts",
+    "./pinterest-boards": "./src/components/pinterest-boards/index.ts",
+    "./figma-board": "./src/components/figma-board/index.ts",
+    "./notes-pad": "./src/components/notes-pad/index.ts",
+    "./pyramid-chart": "./src/components/pyramid-chart/index.ts",
+    "./mini-calendar": "./src/components/mini-calendar/index.ts",
+    "./search-dialog": "./src/components/search-dialog/index.ts",
+    "./notifications": "./src/components/notifications/index.ts",
+    "./accounts": "./src/components/accounts/index.ts",
+    "./board-overview": "./src/components/board-overview/index.ts",
+    "./link-chips": "./src/components/link-chips/index.ts",
+    "./per-person-price": "./src/components/per-person-price/index.ts",
+    "./grouped-nav": "./src/components/grouped-nav/index.ts",
+    "./trash-panel": "./src/components/trash-panel/index.ts",
+    "./phone-tour": "./src/components/phone-tour/index.ts",
+    "./role-preview": "./src/components/role-preview/index.ts",
+    "./wishlist": "./src/components/wishlist/index.ts",
+    "./shrink-picture": "./src/shrinkPicture.ts",
+    "./use-dismiss": "./src/useDismiss.ts",
+    "./permissions": "./src/permissions/index.ts",
+    "./server/auth": "./src/server/auth/index.ts",
+    "./server/lists": "./src/server/lists/index.ts",
+    "./server/notes": "./src/server/notes/index.ts",
+    "./server/accounts": "./src/server/accounts/index.ts",
+    "./server/calendar": "./src/server/calendar/index.ts",
+    "./server/link-preview": "./src/server/link-preview/index.ts",
+    "./server/wishlist": "./src/server/wishlist/index.ts",
+    "./server/storage": "./src/server/storage/index.ts",
+    "./server/storage/google-sheets": "./src/server/storage/google-sheets.ts",
+    "./server/storage/dynamodb": "./src/server/storage/dynamodb.ts",
+    "./assets/*": "./assets/*"
+  },
+  "files": [
+    "src",
+    "assets",
+    "tools"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node tests/smoke-render.mjs",
+    "check": "npm run typecheck && npm run test"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-dynamodb": ">=3",
+    "@aws-sdk/lib-dynamodb": ">=3",
+    "framer-motion": ">=11",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-dynamodb": {
+      "optional": true
+    },
+    "@aws-sdk/lib-dynamodb": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1155.0",
+    "@aws-sdk/lib-dynamodb": "^3.1155.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "esbuild": "^0.25.0",
+    "framer-motion": "^13.2.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "typescript": "^5.9.3"
+  }
+}

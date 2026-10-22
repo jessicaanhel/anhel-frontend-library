@@ -1,0 +1,75 @@
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  padding: 0 4px 0 9px;
+  border-radius: 11px;
+  background: var(--surface, #e4e9df);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.chip a {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--accent, #4d5f49);
+  text-decoration: none;
+}
+
+.chip button {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-soft, #72756e);
+  cursor: pointer;
+}
+
+.input {
+  flex: 1 1 110px;
+  min-width: 100px;
+  max-width: 190px;
+  height: 22px;
+  padding: 0 9px;
+  border: 1px dashed var(--line, #d9d5cb);
+  border-radius: 11px;
+  background: transparent;
+  color: inherit;
+  font-size: 10px;
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--danger, #b66a4f);
+}
+
+.error {
+  width: 100%;
+  font-size: 9px;
+  color: var(--danger, #b66a4f);
+}
+
+/* Bigger tap targets on a phone. */
+@media (max-width: 820px) {
+  .chip {
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .input {
+    height: 30px;
+    font-size: 12px;
+  }
+}

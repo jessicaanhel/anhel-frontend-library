@@ -1,0 +1,36 @@
+.cell {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.cell input {
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line, #ddd9d0);
+  border-radius: 8px;
+  background: var(--surface, #f5f2ec);
+  color: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.switch,
+.calculation {
+  padding: 0 4px;
+  font-size: 9px;
+  text-align: left;
+  color: var(--accent, #647460);
+}
+
+.switch {
+  border: 0;
+  background: transparent;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.calculation {
+  color: var(--ink-soft, #72756e);
+}

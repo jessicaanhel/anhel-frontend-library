@@ -1,0 +1,312 @@
+/* The wishlist: a card with the tabs and the form, then a grid of item cards. */
+
+.page {
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--paper, #fbfaf6);
+  color: var(--ink, #2d302b);
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.headingText h3 {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.headingText p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft, #83867d);
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--surface, #f1efe9);
+  color: var(--accent, #4d5f49);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.tabs button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface, #f0ede6);
+  color: var(--ink-soft, #72756e);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tabs button span {
+  margin-left: 2px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.tabs button.on {
+  background: var(--accent, #657760);
+  color: #fff;
+}
+
+.error {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--danger, #a8644c);
+}
+
+.actions {
+  margin-top: 16px;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--accent, #4d5f49);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.textButton {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft, #72756e);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- the add and edit form ---- */
+
+.form {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--surface, #f5f2ec);
+}
+
+.form label {
+  display: grid;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.form input,
+.form textarea,
+.form select {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--line, #ddd9d0);
+  border-radius: 10px;
+  background: var(--paper, #fbfaf6);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  outline: none;
+}
+
+.form textarea {
+  resize: vertical;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.formButtons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fieldNote {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft, #94968e);
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  justify-self: start;
+}
+
+/* ---- the items ---- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line, #e7e2d8);
+  border-radius: 16px;
+  background: var(--paper, #fbfaf6);
+  color: var(--ink, #2d302b);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  background: var(--surface, #ece8e0);
+}
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft, #b9b4a8);
+}
+
+.body {
+  display: grid;
+  flex: 1;
+  gap: 6px;
+  align-content: start;
+  padding: 12px 14px 14px;
+}
+
+.itemHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.itemHead strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.price {
+  flex: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent, #8e4d39);
+}
+
+.body p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--ink-soft, #72756e);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.linkChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 11px;
+  background: var(--surface, #e4e9df);
+  color: var(--accent, #4d5f49);
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tools {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.tools button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(251, 250, 246, 0.92);
+  color: var(--ink-soft, #72756e);
+  cursor: pointer;
+}
+
+.tools button:hover {
+  color: var(--ink, #2d302b);
+}
+
+.empty {
+  display: grid;
+  grid-column: 1 / -1;
+  place-items: center;
+  height: 140px;
+  border-radius: 18px;
+  background: var(--paper, #fbfaf6);
+  font-size: 13px;
+  color: var(--ink-soft, #83867d);
+}
+
+@media (max-width: 520px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .tools button {
+    width: 36px;
+    height: 36px;
+  }
+}

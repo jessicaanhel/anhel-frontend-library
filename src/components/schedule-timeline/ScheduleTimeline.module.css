@@ -1,0 +1,275 @@
+/* Adapted from angela-simon-wedding/components/invitation/ScheduleInvitation.module.css.
+   Themable through CSS custom properties (all optional, with fallbacks):
+   --font-display, --ink-soft, --paper (background of the sticky date strip,
+   should match the page behind it), --accent (time labels),
+   --schedule-sticky-top (where the date strip sticks, e.g. below a fixed
+   nav bar). */
+
+.section {
+  position: relative;
+}
+
+.eyebrow {
+  font-family: var(--font-display, inherit);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: var(--accent, #b08d4f);
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-display, inherit);
+  text-align: center;
+}
+
+.dateStripWrap {
+  position: sticky;
+  top: var(--schedule-sticky-top, 3.6rem);
+  z-index: 15;
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem 0;
+  margin-top: 2.5rem;
+  background: var(--paper, #fbf5ea);
+}
+
+.dateStripRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.edgeDay {
+  font-family: var(--font-display, inherit);
+  font-size: 1.1rem;
+  color: var(--ink-soft, #837e70);
+  opacity: 0.4;
+}
+
+.dateStrip {
+  position: relative;
+  display: grid;
+  align-items: center;
+  width: min(300px, 78vw);
+}
+
+.dateBtn {
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display, inherit);
+  font-size: 1.5rem;
+  color: var(--ink-soft, #837e70);
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.dateBtn:hover {
+  opacity: 0.85;
+}
+
+.heartFloat {
+  position: absolute;
+  top: 50%;
+  width: 5.5rem;
+  height: 5rem;
+  transform: translate(-50%, -50%);
+  transition: left 0.1s linear;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.heartIcon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.heartImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(176, 141, 79, 0.45));
+}
+
+.mainDayNumber {
+  position: relative;
+  margin-top: 0.3rem;
+  font-family: var(--font-display, inherit);
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #fff8e6;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.55), 0 -1px 1px rgba(0, 0, 0, 0.55), 1px 0 1px rgba(0, 0, 0, 0.55),
+    -1px 0 1px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.track {
+  position: relative;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.thread {
+  /* A thin golden thread, not a chain: the pendant slides down this as the
+     track scrolls past (see .pendant's scroll-linked "top" below). Height
+     (not bottom) is scroll-linked too, set inline from the same value as
+     the pendant's "top", so the thread only exists from here down to
+     wherever the pendant currently is, growing as it descends. */
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #e3c477, #b08d4f 50%, #e3c477);
+  box-shadow: 0 0 3px rgba(176, 141, 79, 0.5);
+  opacity: 0.85;
+}
+
+.pendant {
+  /* Sized to the rings illustration's own aspect ratio (1231x990, about
+     1.24) instead of a square, so object-fit: contain below doesn't
+     letterbox it. Adjust if you use a different pendant image. */
+  position: absolute;
+  left: 50%;
+  width: 3.1rem;
+  height: 2.5rem;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.pendantImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(176, 141, 79, 0.55));
+}
+
+.dayGroup {
+  /* Spacing between days. The date strip above is the only place the day
+     number shows. */
+  margin-top: 2.5rem;
+}
+
+.dayGroup:first-child {
+  margin-top: 0;
+}
+
+.item {
+  width: 38%;
+  padding: 0.75rem 0;
+}
+
+.itemLeft {
+  margin-right: 62%;
+  text-align: right;
+}
+
+.itemRight {
+  margin-left: 62%;
+  text-align: left;
+}
+
+.time {
+  font-family: var(--font-display, inherit);
+  color: var(--accent, #b08d4f);
+  font-size: 1.05rem;
+}
+
+.itemTitle {
+  font-size: 1.15rem;
+  margin: 0.3rem 0 0.35rem;
+}
+
+.description {
+  color: var(--ink-soft, #837e70);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+  .dateStrip {
+    width: min(240px, 70vw);
+  }
+
+  .dateBtn {
+    font-size: 1.2rem;
+  }
+
+  .edgeDay {
+    font-size: 0.9rem;
+  }
+
+  .dateStripRow {
+    gap: 0.9rem;
+  }
+
+  .thread {
+    width: 1.5px;
+  }
+
+  .heartFloat {
+    width: 4rem;
+    height: 3.6rem;
+  }
+
+  .pendant {
+    width: 2.5rem;
+    height: 2rem;
+  }
+
+  .mainDayNumber {
+    font-size: 1.25rem;
+  }
+
+  .item {
+    width: 40%;
+    padding: 0.6rem 0;
+  }
+
+  .itemLeft {
+    margin-right: 60%;
+  }
+
+  .itemRight {
+    margin-left: 60%;
+  }
+
+  .time {
+    font-size: 0.9rem;
+  }
+
+  .itemTitle {
+    font-size: 1rem;
+  }
+
+  .description {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .dateStrip {
+    width: min(200px, 68vw);
+  }
+
+  .item {
+    width: 42%;
+  }
+
+  .itemLeft {
+    margin-right: 58%;
+  }
+
+  .itemRight {
+    margin-left: 58%;
+  }
+}

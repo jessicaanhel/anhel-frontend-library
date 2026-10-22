@@ -1,0 +1,439 @@
+/* Shared by NotesPad and DrawPad. */
+
+.pad {
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--paper, #fbfaf6);
+  color: var(--ink, #2d302b);
+}
+
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.headingText h3 {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.headingText p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft, #83867d);
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--accent, #4d5f49);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.error {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--danger, #a8644c);
+}
+
+/* ---- the list of notes ---- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 118px;
+  padding: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card strong {
+  font-family: var(--font-display, inherit);
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.card span {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--ink-soft, #72756e);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.card em {
+  margin-top: auto;
+  font-size: 9px;
+  font-style: normal;
+  color: var(--ink-soft, #94968e);
+}
+
+.empty {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  height: 120px;
+  font-size: 13px;
+  color: var(--ink-soft, #83867d);
+}
+
+/* ---- the editor ---- */
+
+.editor {
+  min-height: 70vh;
+  padding: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  color: var(--ink, #2d302b);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--accent, #647460);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.state {
+  margin-right: auto;
+  font-size: 10px;
+  color: var(--ink-soft, #94968e);
+}
+
+.colours {
+  display: flex;
+  gap: 6px;
+}
+
+.colour {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.colour.on {
+  outline: 2px solid var(--accent, #657760);
+  outline-offset: 1px;
+}
+
+.share,
+.deleteNote {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.share {
+  color: var(--accent, #657760);
+}
+
+.deleteNote {
+  color: var(--danger, #a8644c);
+}
+
+.title {
+  display: block;
+  width: 100%;
+  margin: 18px 0 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-display, inherit);
+  font-size: 30px;
+  outline: 0;
+}
+
+.blocks {
+  display: grid;
+  gap: 10px;
+}
+
+.block {
+  position: relative;
+}
+
+/* Move up / down / remove: faint until the block is hovered or focused. */
+.blockControls {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+  opacity: 0.45;
+}
+
+.block:hover .blockControls,
+.block:focus-within .blockControls {
+  opacity: 1;
+}
+
+.blockControls button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--accent, #647460);
+  cursor: pointer;
+}
+
+.blockControls button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.noteText {
+  display: block;
+  width: 100%;
+  /* The height follows the text (see AutoTextarea), so no scrollbar. */
+  resize: none;
+  overflow: hidden;
+  padding: 4px 56px 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink, #2d302b);
+  font-size: 15px;
+  line-height: 1.6;
+  outline: 0;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.sticker {
+  padding: 6px 0;
+  font-size: 72px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.stickerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 4px;
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.stickerGrid button {
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.stickerGrid button:hover {
+  background: var(--surface, #f1efe9);
+}
+
+.linkForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.linkForm input {
+  flex: 1 1 160px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line, #ddd9d0);
+  border-radius: 10px;
+  background: var(--surface, #f5f2ec);
+  font-size: 13px;
+  outline: none;
+}
+
+/* The tools stay at the bottom of the screen while a long note scrolls. */
+.toolbar {
+  position: sticky;
+  bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px rgba(37, 43, 35, 0.14);
+}
+
+.toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 17px;
+  background: var(--surface, #f1efe9);
+  color: var(--accent, #4d5f49);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.size {
+  margin: 8px 0 0;
+  font-size: 10px;
+  color: var(--danger, #a8644c);
+}
+
+.loading {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--ink-soft, #83867d);
+}
+
+/* ---- drawing pad ---- */
+
+.drawPad {
+  overflow: hidden;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.drawTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 56px 8px 8px;
+}
+
+.drawSwitch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface, #f1efe9);
+  color: var(--accent, #4d5f49);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.drawSwitch.on {
+  background: var(--accent, #657760);
+  color: #fff;
+}
+
+.drawColour {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.drawColour.on {
+  box-shadow: 0 0 0 2px var(--accent, #657760);
+}
+
+.drawSize,
+.drawIcon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface, #f1efe9);
+  color: var(--accent, #647460);
+  cursor: pointer;
+}
+
+.drawSize i {
+  display: block;
+  border-radius: 50%;
+  background: var(--accent, #4d5f49);
+}
+
+.drawSize.on,
+.drawIcon.on {
+  background: var(--surface, #dfe4d8);
+  outline: 2px solid var(--accent, #657760);
+}
+
+.drawIcon:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.drawCanvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1000 / 600;
+  /* Only while "Draw" is on does a finger draw; otherwise it scrolls the page. */
+  touch-action: auto;
+  cursor: default;
+}
+
+.drawCanvas.active {
+  touch-action: none;
+  cursor: crosshair;
+}

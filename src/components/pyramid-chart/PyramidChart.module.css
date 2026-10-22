@@ -1,0 +1,99 @@
+.pyramid {
+  /* The legend moves under the drawing when this box is narrow (not the window). */
+  container-type: inline-size;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--surface, #f5f2ec);
+  color: var(--ink, #2d302b);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.segmented button {
+  height: 26px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-soft, #72756e);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segmented button.on {
+  background: var(--paper, #fbfaf6);
+  color: var(--ink, #3f4a3c);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(200px, 340px) 1fr;
+  gap: 22px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+}
+
+.legend {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+}
+
+.legend li {
+  display: grid;
+  grid-template-columns: 12px 1fr auto 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  border-radius: 8px;
+}
+
+.legend li.on {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.legend em {
+  font-style: normal;
+  text-align: right;
+  color: var(--ink-soft, #8a8d85);
+}
+
+.note {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--ink-soft, #72756e);
+}
+
+@container (max-width: 560px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+}

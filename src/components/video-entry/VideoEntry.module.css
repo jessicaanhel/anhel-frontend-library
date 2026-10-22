@@ -1,0 +1,137 @@
+/* Adapted from angela-simon-wedding/components/invitation/VideoEntry.module.css.
+   Themable through CSS custom properties (all optional, with fallbacks):
+   --gutter, --font-display, --ink-soft. The --video-entry-* ones are set
+   from props by the component itself. */
+
+.stage {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter, clamp(1.5rem, 5vw, 4rem));
+  /* Should match the video's own canvas colour (backgroundColor prop) so
+     there's no visible seam/box around it while it plays. */
+  background: var(--video-entry-bg, #ffffff);
+}
+
+.dissolveOverlay {
+  /* Fixed, on top of the page (already mounted underneath): this is what
+     lets the video fade away to reveal it instead of a hard swap. Not
+     interactive: nothing here should block clicks on the page fading in
+     behind it. Same background as .stage, for the same reason: this is the
+     backdrop for the frozen last video frame. */
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter, clamp(1.5rem, 5vw, 4rem));
+  background: var(--video-entry-bg, #ffffff);
+  pointer-events: none;
+}
+
+.videoButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.videoButton:disabled {
+  cursor: default;
+}
+
+.videoWrap {
+  position: relative;
+  /* The static image and the video share this one box, so both stay
+     matched in size. */
+  width: var(--video-entry-width, min(70.5vw, 585px));
+  /* Tuned together with object-fit: cover on .video below: if this ratio
+     equals the ratio of the part of the video frame that actually has
+     content, cover's default centre crop lands exactly on that content
+     (empty side margins are cropped away, no extra zoom needed). Re-measure
+     whenever the video changes. */
+  aspect-ratio: var(--video-entry-aspect-ratio, 16 / 9);
+  overflow: hidden;
+  /* Subtle "come closer" invitation before the click, only while closed
+     (see the :has() below); once playing, the video takes over and this
+     would just be a distracting wobble. */
+  transition: transform 0.4s ease;
+}
+
+.videoWrap:has(+ .tap):hover {
+  transform: scale(1.04);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.closedOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.closedImage {
+  /* Fills the shared box. If the illustration has (almost) the same aspect
+     ratio as .videoWrap, "cover" shows it at effectively the same size and
+     crop as the video once playback starts, with no visible jump. */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tap {
+  font-family: var(--font-display, inherit);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft, #837e70);
+}
+
+/* Floating music on/off switch: stays in the corner through the dissolve
+   and the whole page (above the dissolve overlay, z-index 50). */
+.musicToggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1.25rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  color: #000000;
+  box-shadow: 0 6px 18px rgba(43, 42, 40, 0.22);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.musicToggle:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.musicToggle:active {
+  transform: scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage * {
+    transition: none !important;
+  }
+}

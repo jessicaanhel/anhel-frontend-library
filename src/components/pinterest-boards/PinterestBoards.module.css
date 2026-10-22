@@ -1,0 +1,204 @@
+/* Shared by PinterestBoard and PinterestBoardList. */
+
+.page {
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--paper, #fbfaf6);
+  color: var(--ink, #2d302b);
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.headingText h3 {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.headingText p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft, #83867d);
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--accent, #4d5f49);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.inlineForm input {
+  flex: 1 1 120px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line, #ddd9d0);
+  border-radius: 10px;
+  background: var(--surface, #f5f2ec);
+  font-size: 13px;
+  outline: none;
+}
+
+.error {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--danger, #a8644c);
+}
+
+.tagFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.tagFilter button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface, #f0ede6);
+  color: var(--ink-soft, #72756e);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tagFilter button span {
+  margin-left: 2px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.tagFilter button.on {
+  background: var(--accent, #657760);
+  color: #fff;
+}
+
+.boardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--accent, #647460);
+}
+
+.remove {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #a2a298;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.remove:hover {
+  opacity: 1;
+  background: var(--surface, #f0ede6);
+}
+
+.boardTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--surface, #e4e9df);
+  color: var(--accent, #4d5f49);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.tagChip button {
+  height: 100%;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tagChip .tagRemove {
+  display: grid;
+  place-items: center;
+  padding: 0 7px 0 0;
+  opacity: 0.6;
+}
+
+.tagChip .tagRemove:hover {
+  opacity: 1;
+}
+
+.tagInput {
+  width: 90px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px dashed var(--line, #c9c6bd);
+  border-radius: 12px;
+  background: transparent;
+  font-size: 11px;
+  outline: none;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  height: 140px;
+  font-size: 13px;
+  color: var(--ink-soft, #83867d);
+}
+
+.embed {
+  min-height: 120px;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.embedCompact {
+  min-height: 90px;
+  max-height: 190px;
+  border-radius: 10px;
+}

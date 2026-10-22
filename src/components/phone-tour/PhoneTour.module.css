@@ -1,0 +1,98 @@
+/* Shared by PhoneFrame and PhoneTour. */
+
+.phone {
+  width: var(--phone-width, 260px);
+  padding: 7px;
+  border-radius: 38px;
+  background: var(--phone-bezel, #1e2a21);
+  box-shadow: 0 24px 50px -22px rgba(30, 42, 33, 0.55), 0 2px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.screen {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--phone-ratio, 390 / 844);
+  border-radius: 31px;
+  background: var(--paper, #f9faf6);
+}
+
+.screenImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- the tour ---- */
+
+.tour {
+  /* A row that scrolls sideways must never make its parent wider (in a grid or flex layout). */
+  min-width: 0;
+  color: var(--ink, #1e2a21);
+}
+
+.track {
+  display: flex;
+  gap: var(--tour-gap, 22px);
+  overflow-x: auto;
+  padding: 12px var(--tour-edge, 20px);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--tour-edge, 20px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: var(--tour-card-width, 250px);
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.card figcaption {
+  margin-top: 16px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink-soft, #5d6a5e);
+}
+
+.card figcaption strong {
+  color: var(--ink, #1e2a21);
+}
+
+/* The arrows are for a mouse: hidden on touch screens and narrow windows. */
+.arrows {
+  display: none;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 var(--tour-edge, 20px);
+}
+
+@media (hover: hover) and (min-width: 700px) {
+  .arrows {
+    display: flex;
+  }
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1.5px solid var(--accent, #344134);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--accent, #344134);
+  cursor: pointer;
+}
+
+.arrow:hover {
+  background: var(--accent, #344134);
+  color: var(--paper, #f9faf6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    scroll-behavior: auto;
+  }
+}

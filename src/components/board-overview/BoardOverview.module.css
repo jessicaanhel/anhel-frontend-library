@@ -1,0 +1,323 @@
+.overview {
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--paper, #fbfaf6);
+  color: var(--ink, #2d302b);
+}
+
+.heading h3 {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.heading p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft, #83867d);
+}
+
+.addRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line, #e7e2d8);
+  border-radius: 18px;
+  background: var(--paper, #fbfaf6);
+  color: var(--accent, #4d5f49);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addButton.on,
+.addButton:hover {
+  background: var(--surface, #e4e9df);
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.form input:not([type="file"]) {
+  flex: 1 1 140px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line, #ddd9d0);
+  border-radius: 10px;
+  background: var(--surface, #f5f2ec);
+  color: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.picturePick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.picturePreview {
+  height: 48px;
+  border-radius: 8px;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--accent, #4d5f49);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent, #647460);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.error {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--danger, #a8644c);
+}
+
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.filter button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface, #f0ede6);
+  color: var(--ink-soft, #72756e);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter button span {
+  margin-left: 2px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.filter button.on {
+  background: var(--accent, #657760);
+  color: #fff;
+}
+
+.group {
+  margin-top: 20px;
+}
+
+.group h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 13px;
+}
+
+.group h4 span {
+  padding: 1px 7px;
+  border-radius: 9px;
+  background: var(--surface, #f0ede6);
+  color: var(--ink-soft, #72756e);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.itemCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line, #e7e2d8);
+  border-radius: 14px;
+  background: var(--paper, #fbfaf6);
+  font-size: 12px;
+}
+
+/* A card with a Figma board open takes the whole row. */
+.itemCard.wide {
+  grid-column: 1 / -1;
+}
+
+.itemHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.itemType {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-soft, #72756e);
+}
+
+.itemCard strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.itemImage {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.itemDate {
+  font-weight: 600;
+  color: var(--danger, #b66a4f);
+}
+
+.itemNote {
+  color: var(--ink-soft, #72756e);
+  overflow-wrap: anywhere;
+}
+
+.itemLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.openLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--accent, #647460);
+}
+
+.figmaFrame {
+  width: 100%;
+  height: 74vh;
+  min-height: 420px;
+  border: 1px solid var(--line, #e7e2d8);
+  border-radius: 14px;
+  background: var(--paper, #fbfaf6);
+}
+
+.categoryField {
+  height: 30px;
+  margin-top: auto;
+  padding: 0 9px;
+  border: 1px dashed var(--line, #d9d5cb);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+}
+
+.remove {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #a2a298;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.remove:hover {
+  opacity: 1;
+  background: var(--surface, #f0ede6);
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  height: 140px;
+  margin-top: 14px;
+  border-top: 1px solid var(--line, #ece8e0);
+  font-size: 13px;
+  color: var(--ink-soft, #83867d);
+}
+
+/* On a phone: one field per row, bigger tap targets. */
+@media (max-width: 820px) {
+  .form input:not([type="file"]),
+  .form .primaryButton {
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .itemCard .remove {
+    width: 40px;
+    height: 40px;
+    margin: -8px -8px 0 0;
+  }
+
+  .categoryField {
+    height: 40px;
+  }
+
+  .itemCard .textButton,
+  .itemCard .openLink {
+    padding: 6px 0;
+  }
+
+  .addButton {
+    height: 42px;
+  }
+}

@@ -1,0 +1,99 @@
+.calendar {
+  padding: 25px 0 24px;
+  color: var(--ink, #2d302b);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 17px;
+}
+
+.head strong {
+  font-family: var(--font-display, inherit);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.head button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface, #f0ede6);
+  color: var(--ink-soft, #74766f);
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+}
+
+.grid span {
+  font-size: 8px;
+}
+
+.weekdays {
+  margin-bottom: 8px;
+  color: var(--ink-soft, #a6a59e);
+}
+
+.days {
+  row-gap: 7px;
+}
+
+.days span {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  margin: auto;
+  color: var(--ink-soft, #696c66);
+}
+
+.days .outside {
+  opacity: 0.45;
+}
+
+.days .today {
+  border-radius: 50%;
+  background: var(--accent, #657760);
+  color: #fff;
+  box-shadow: 0 4px 9px rgba(72, 91, 67, 0.22);
+}
+
+/* The dot under the number of a marked day. */
+.days .marked::after {
+  content: "";
+  position: absolute;
+  bottom: 1px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--danger, #b66a4f);
+}
+
+.days .today.marked::after {
+  background: #fff;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--important, #d1453b);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 600;
+}
