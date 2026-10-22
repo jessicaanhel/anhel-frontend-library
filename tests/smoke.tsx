@@ -13,10 +13,13 @@ import {
   FigmaBoard,
   FramedPhotoStack,
   GroupedNav,
+  LessonPlaylist,
   LinkChips,
   LoginForm,
   MiniCalendar,
   MyInformation,
+  NoteEditor,
+  NoteView,
   NotesPad,
   NotificationBell,
   PerPersonPrice,
@@ -26,6 +29,8 @@ import {
   PinterestBoard,
   PinterestBoardList,
   PyramidChart,
+  Quiz,
+  QuizEditor,
   RolePreview,
   ScheduleTimeline,
   SearchDialog,
@@ -35,6 +40,7 @@ import {
   TrashPanel,
   VideoEntry,
   Wishlist,
+  YouTubePlayer,
   createPermissionModel,
   emptyBoardItem,
   type NavNode,
@@ -285,6 +291,35 @@ const sampleTasks: Task[] = [
   results.push("NotesPad + DrawPad ok");
 }
 
+// NoteView: read-only text with its line breaks, a drawing as SVG (an eraser
+// stroke as a mask), a picture and a sticker; no fields and no buttons.
+// NoteEditor: the blocks with their controls and the toolbar, without the endpoint parts.
+{
+  const doc = {
+    blocks: [
+      { id: "a", type: "text" as const, text: "First line\nSecond line" },
+      { id: "b", type: "text" as const, text: "   " },
+      { id: "c", type: "draw" as const, strokes: [{ c: "#112233", w: 4, p: [10, 10, 50, 60, 90, 20] }, { c: "#000000", w: 8, e: 1 as const, p: [40, 40] }, { c: "#445566", w: 3, p: [5, 5] }] },
+      { id: "d", type: "image" as const, src: "https://cdn.test/a.jpg" },
+      { id: "e", type: "sticker" as const, emoji: "🎉" },
+    ],
+  };
+  const view = renderToString(<NoteView value={doc} title="Lesson 1" />);
+  assert.ok(view.includes("Lesson 1") && view.includes("First line\nSecond line"), "title and text with its line break");
+  assert.ok(view.includes('viewBox="0 0 1000 600"') && view.includes("<path") && view.includes("<circle"), "the drawing as SVG");
+  assert.equal(count(view, "<mask"), 1, "one eraser stroke, one mask");
+  assert.ok(view.includes("https://cdn.test/a.jpg") && view.includes("🎉"), "picture and sticker");
+  assert.ok(!view.includes("<textarea") && !view.includes("<button") && !view.includes("<input"), "nothing to edit");
+  assert.equal(count(view, "_viewText"), 1, "an empty text block is left out");
+  assert.ok(renderToString(<NoteView value={{ blocks: [] }} texts={{ empty: "Nothing yet" }} />).includes("Nothing yet"));
+
+  const editor = renderToString(<NoteEditor value={doc} onChange={() => {}} texts={{ addText: "Add text" }} />);
+  assert.equal(count(editor, "<textarea"), 2, "a field per text block");
+  assert.ok(editor.includes("<canvas") && editor.includes("Add text") && editor.includes('aria-label="Move up"'), "pad, toolbar, block controls");
+  assert.ok(!editor.includes("Saved") && !editor.includes("Back to the notes"), "no save state and no back button");
+  results.push("NoteView + NoteEditor ok");
+}
+
 // PyramidChart: layers by area, a legend, the switch for several views, the empty text.
 {
   const html = renderToString(
@@ -506,6 +541,53 @@ const panelModel = createPermissionModel<PanelRole>({
   assert.ok(html.includes("Under the account icon"), "extra menu");
   assert.equal(renderToString(<RolePreview roles={[]} menu={[]} />), "", "no roles: nothing");
   results.push("RolePreview ok");
+}
+
+// Quiz: a typed and a choice question, nothing marked before a submit.
+// QuizEditor: a row per question with its controls, options and expected answer.
+{
+  const questions = [
+    { id: "q1", prompt: "What is a pause?", kind: "text" as const, answer: "silence" },
+    { id: "q 2", prompt: "Pick one", kind: "choice" as const, options: ["Yes", "", "No"], answer: "No" },
+  ];
+  const quiz = renderToString(<Quiz questions={questions} initialAnswers={{ q1: "a rest" }} onSubmit={() => {}} showResult texts={{ submit: "Check" }} />);
+  assert.ok(quiz.includes("What is a pause?") && quiz.includes("a rest") && quiz.includes("Check"), "prompt, earlier answer and button");
+  assert.equal(count(quiz, 'type="radio"'), 2, "empty options are left out");
+  assert.ok(!quiz.includes("Not quite") && !quiz.includes(" right"), "no marks before a submit");
+  assert.ok(renderToString(<Quiz questions={[]} onSubmit={() => {}} />).includes("no questions"), "empty quiz");
+
+  const editor = renderToString(<QuizEditor value={questions} onChange={() => {}} />);
+  assert.ok(editor.includes("Question 1") && editor.includes("Question 2") && editor.includes("Add a question"), "rows and the add button");
+  assert.equal(count(editor, 'aria-label="Remove this option"'), 3, "one remove button per option");
+  assert.ok(editor.includes("None (open question)") && editor.includes('value="silence"'), "expected answers");
+  results.push("Quiz + QuizEditor ok");
+}
+
+// YouTubePlayer: the privacy-enhanced embed, lazy, with a title; a message for a bad link.
+// LessonPlaylist: one button per part, the open one marked.
+{
+  const player = renderToString(<YouTubePlayer video="https://youtu.be/dQw4w9WgXcQ" title="Lesson 1" />);
+  assert.ok(player.includes('src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0"'), "nocookie embed");
+  assert.ok(player.includes('loading="lazy"') && player.includes('title="Lesson 1"') && player.includes("allowFullScreen"), "lazy, titled, full screen");
+  const bad = renderToString(<YouTubePlayer video="https://vimeo.com/1" title="x" texts={{ invalid: "Bad link" }} />);
+  assert.ok(bad.includes("Bad link") && !bad.includes("<iframe"), "no player for a bad link");
+
+  const playlist = renderToString(
+    <LessonPlaylist
+      items={[
+        { id: "a", title: "Welcome", kind: "video", duration: "3:10" },
+        { id: "b", title: "Read first", kind: "reading" },
+      ]}
+      activeId="b"
+      onSelect={() => {}}
+      texts={{ label: "Course" }}
+    />
+  );
+  assert.ok(playlist.includes('aria-label="Course"') && playlist.includes("Welcome") && playlist.includes("3:10"), "list, titles, duration");
+  assert.equal(count(playlist, "<button"), 2);
+  assert.equal(count(playlist, 'aria-current="true"'), 1, "one part is open");
+  assert.ok(playlist.indexOf('aria-current="true"') > playlist.indexOf("Welcome"), "the second part is the open one");
+  results.push("YouTubePlayer + LessonPlaylist ok");
 }
 
 console.log(results.join("\n"));

@@ -16,7 +16,7 @@ Everything in the library, with import paths, origins and status, is listed in
 | [Task storage](#task-storage) | the panel's Google Sheet (and the local JSON file) | One storage contract with memory, JSON file, Google Sheets and DynamoDB backends, picked by a setting | Node 18+; Sheets: a googleapis client; DynamoDB: `@aws-sdk/client-dynamodb` + `@aws-sdk/lib-dynamodb` |
 | [`PinterestBoardList`, `PinterestBoard`](#pinterestboardlist) | the panel's Inspiration pages | Public Pinterest boards added by link, with tags and a tag filter; full board links are embedded live | React 18+ |
 | [`FigmaBoard`](#figmaboard) | the panel's Mind Board page | A shared Figma / FigJam file embedded, with an "Open in Figma" link | React 18+ |
-| [`NotesPad`, `DrawPad`](#notespad) | the Notes of the private Bride and Groom boards | Notes with text, a drawing pad, pictures and stickers, saved by itself; the matching notes endpoint | React 18+; server part: Node 18+ |
+| [`NotesPad`, `NoteEditor`, `NoteView`, `DrawPad`](#notespad) | the Notes of the private Bride and Groom boards (`NoteEditor` and `NoteView` written for 0.5.0) | Notes with text, a drawing pad, pictures and stickers, saved by itself; one note's editor on its own; a read-only note; the matching notes endpoint | React 18+; server part: Node 18+ |
 | [`PyramidChart`](#pyramidchart) | the budget pyramid | A pyramid with one layer per label, sliced by area, with a legend and an optional switch between views | React 18+ |
 | [`MiniCalendar`](#minicalendar) | the calendar in the panel's right column | A month view with dotted days and a red round count badge per day | React 18+ |
 | [`SearchDialog`, `useSearchShortcut`](#searchdialog) | "Search anything" (Ctrl/⌘ K) | One search box over sections of results that are passed in | React 18+ |
@@ -30,6 +30,9 @@ Everything in the library, with import paths, origins and status, is listed in
 | [`TrashPanel`](#trashpanel) | the panel's Trash page | What was removed, with restore and delete for good | React 18+; server part: Node 18+ |
 | [`PhoneFrame`, `PhoneTour`, `RolePreview`](#phoneframe-phonetour-and-rolepreview) | the portfolio page's phones, screenshot tour and "Log in as" | A phone frame, a swipeable screenshot row, and a role-by-role menu preview | React 18+ |
 | [`shrinkPicture`, `useDismiss`](#utilities) | the notes and board pictures; the panel's dropdowns | Picture shrinking in the browser; closing a dropdown on an outside click | React 18+ |
+| [Grants](#grants) | not on the wedding site (written for 0.5.0, for a members' area) | Per-person access to a course or lesson with an optional deadline, and its endpoint | Node 18+ |
+| [`Quiz`, `QuizEditor`](#quiz-and-quizeditor) | not on the wedding site (written for 0.5.0, for a members' area) | A quiz to fill in with optional right/wrong marks, and the editor of its questions | React 18+ |
+| [`YouTubePlayer`, `LessonPlaylist`](#youtubeplayer-and-lessonplaylist) | not on the wedding site (written for 0.5.0, for a members' area) | A privacy-enhanced YouTube player and the list of a course's videos and readings | React 18+ |
 | [`tools/cut-frame-interior.mjs`](#toolscut-frame-interiormjs) | the cutting of the floral frame's inside for that photo slider | Cuts a frame image's solid inside to transparent and suggests the matching clip-path | Node 18+, ffmpeg |
 
 All of them were extracted from the `angela-simon-wedding` site (Next.js 16,
@@ -88,7 +91,7 @@ and is not re-exported from the root:
 | `anhel-frontend-library/confirm-dialog` | `useConfirm` (the "Are you sure?" dialog the lists use) |
 | `anhel-frontend-library/pinterest-boards` | `PinterestBoardList`, `PinterestBoard`, `cleanBoard`, `cleanTags`, `isEmbeddableBoard`, `pinterestLink`, `tagCounts`, `boardsWithTag` |
 | `anhel-frontend-library/figma-board` | `FigmaBoard`, `isFigmaLink`, `figmaEmbedUrl` |
-| `anhel-frontend-library/notes-pad` | `NotesPad`, `DrawPad`, `cleanNoteDoc`, `previewOf`, `noteToPlainText`, `noteFillPercent`, the note types and constants |
+| `anhel-frontend-library/notes-pad` | `NotesPad`, `NoteEditor`, `NoteView`, `DrawPad`, `cleanNoteDoc`, `previewOf`, `noteToPlainText`, `noteFillPercent`, the note types and constants |
 | `anhel-frontend-library/pyramid-chart` | `PyramidChart`, `pyramidLayers` |
 | `anhel-frontend-library/mini-calendar` | `MiniCalendar`, `monthCells`, `weekdayLabels` |
 | `anhel-frontend-library/search-dialog` | `SearchDialog`, `useSearchShortcut`, `searchSections` |
@@ -97,6 +100,8 @@ and is not re-exported from the root:
 | `anhel-frontend-library/board-overview` | `BoardOverview`, `DEFAULT_BOARD_ITEM_TYPES`, `groupItemsByCategory`, `categoriesOf`, `linkSource`, `formatItemDate`, `emptyBoardItem` |
 | `anhel-frontend-library/link-chips` | `LinkChips`, `asWebAddress`, `hostOf`, `addLink` |
 | `anhel-frontend-library/per-person-price` | `PerPersonPrice`, `round2`, `perPersonTotal`, `effectiveGuestCount`, `withPerPersonTotals` |
+| `anhel-frontend-library/quiz` | `Quiz`, `QuizEditor`, `scoreQuiz`, `isAnswerCorrect`, `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions`, `emptyQuizQuestion`, the question and answer types |
+| `anhel-frontend-library/youtube-lesson` | `YouTubePlayer`, `LessonPlaylist`, `youtubeIdFrom`, `youtubeEmbedUrl`, the playlist item type |
 | `anhel-frontend-library/wishlist` | `Wishlist`, `WISHLIST_LIMITS`, `emptyWishlistItem`, `fillFromPreview`, `itemsOfCategory`, `prepareWishlistItem`, the item, category and preview types |
 | `anhel-frontend-library/grouped-nav` | `GroupedNav`, `visibleNavTree`, `firstNavPage`, `navPageTitle`, `allNavPages` |
 | `anhel-frontend-library/trash-panel` | `TrashPanel`, `trashDaysLeft` |
@@ -111,9 +116,10 @@ and is not re-exported from the root:
 | `anhel-frontend-library/server/accounts` | `createAccountHandlers`, `createPermissionsHandlers`, the `AccountRecord` type |
 | `anhel-frontend-library/server/link-preview` | `fetchLinkPreview`, `parsePreview`, `isPrivateAddress`, the `LinkPreview` type |
 | `anhel-frontend-library/server/wishlist` | `createWishlistHandlers`, `cleanWishlistItem` |
+| `anhel-frontend-library/server/grants` | `createGrantHandlers`, `isGrantActive`, `activeGrantsFor`, `hasGrant`, `daysLeft`, `isGrantDate`, the `Grant` type |
 | `anhel-frontend-library/server/calendar` | `createCalendarFeed`, `buildCalendar`, `taskCalendarEvents`, `escapeIcsText`, `foldIcsLine` |
 | `anhel-frontend-library/server/storage` | `ListStorage`/`HistoryStorage`/`StorageBackend` types, `createMemoryStorage`, `createJsonFileStorage`, `selectStorage`, `newId` |
-| `anhel-frontend-library/server/storage/google-sheets` | `createSheetsStorage`, `taskSheetTable`, `trashSheetTable`, `historySheetTable`, `noteSheetTable`, `boardItemSheetTable`, `accountSheetTable`, `wishlistSheetTable`, `cell`, `isYes`, `toNumber` |
+| `anhel-frontend-library/server/storage/google-sheets` | `createSheetsStorage`, `taskSheetTable`, `trashSheetTable`, `historySheetTable`, `noteSheetTable`, `boardItemSheetTable`, `accountSheetTable`, `wishlistSheetTable`, `grantSheetTable`, `cell`, `isYes`, `toNumber` |
 | `anhel-frontend-library/server/storage/dynamodb` | `createDynamoDbStorage` (needs the two `@aws-sdk` packages, optional peer dependencies) |
 
 The server code returns plain web `Response` objects and reads cookies from a
@@ -709,6 +715,25 @@ Pure helpers: `cleanNoteDoc(input, { maxChars, maxBlocks })` (checks a document
 from the browser and returns a clean copy or `null`), `previewOf`,
 `noteToPlainText`, `noteFillPercent`.
 
+**`NoteEditor`** (0.5.0, `"use client"`) is the block editor of `NotesPad` on its
+own: controlled (`value: NoteDoc`, `onChange(doc)`), without a title, colour,
+list or endpoint, so a page can put one note under a video and save it itself.
+Props: `value`, `onChange`, `stickers`, `maxChars`, `texts`, `drawTexts`,
+`className`.
+
+**`NoteView`** (0.5.0) shows a `NoteDoc` read-only, with the same paper and type:
+text with its line breaks, drawings as SVG from the strokes (the pad's 1000 x
+600 shape, sharp at any width), pictures and stickers; no buttons or fields.
+Props: `value`, `title`, `colour` (paper, default the first of `NOTE_COLOURS`),
+`texts` (`empty`, `drawing`), `className`. It has no state, so it also renders
+in a server component.
+
+```tsx
+const [doc, setDoc] = useState<NoteDoc>({ blocks: [] });
+<NoteEditor value={doc} onChange={(next) => { setDoc(next); saveLater(next); }} />
+<NoteView value={mentorNote} title="Homework" />
+```
+
 ### PyramidChart
 
 `"use client"`. A pyramid with one layer per label, the biggest at the bottom.
@@ -1115,6 +1140,123 @@ export async function POST(request: Request) {
 The route decides who may use it. The name lookup and the request are two steps,
 so an address that changes between them is not caught.
 
+## Members' area pieces (0.5.0)
+
+Added in 0.5.0 for a members' area: lessons and videos behind a login, notes
+and quizzes. Written for the library, not taken from another project.
+
+### Grants
+
+Server-safe, no React (`anhel-frontend-library/server/grants`). A role says
+what a group of people may open; a grant gives one person one extra key (a
+course, a lesson) until a date. A grant is
+`{ id, username, key, expiresAt, grantedBy, createdAt }`, where `expiresAt` is
+`YYYY-MM-DD` or `""` for no deadline. The deadline day is still active, and a
+deadline that is not a valid date counts as expired (a typo in a spreadsheet
+must never mean "forever"). Usernames are compared without case, keys exactly.
+
+```ts
+import { hasGrant, type Grant } from "anhel-frontend-library/server/grants";
+
+const grants = await storage.list<Grant>("grants").loadAll();
+if (!hasGrant(grants, session.username, "course-1", today)) return notFound();
+```
+
+`isGrantActive(grant, today)`, `activeGrantsFor(grants, username, today)`,
+`hasGrant(grants, username, key, today)`, `daysLeft(grant, today)` (days the
+grant still opens, today included: `1` on the last day, `0` once expired,
+`null` without a deadline) and `isGrantDate(value)`. `today` is always passed in
+as `YYYY-MM-DD`, so the app decides the time zone.
+
+```ts
+// app/api/grants/route.ts (server)
+import { createGrantHandlers, type Grant } from "anhel-frontend-library/server/grants";
+
+export const { GET, POST, DELETE } = createGrantHandlers({
+  storage: storage.list<Grant>("grants"),
+  getSession: (request) => auth.getSession(request),
+  canManage: (session) => session.roles.includes("admin"),
+  history: storage.history(),
+});
+```
+
+`GET -> { grants }` (every grant for a manager; anyone else gets only their own
+grants that are active today), `POST { username, key, expiresAt } -> { grant,
+grants }` (managers only; a person who already has the key gets their grant
+changed, not a second one; a deadline that is not a real date is a 400),
+`DELETE { id } -> { ok, grants }` (managers only). Options: `storage`,
+`getSession`, `canManage`, `listName` (`"access"`, used in history lines and
+logs), `history`, `today` (default: the date in UTC), `messages`, `logError`.
+For Google Sheets, `grantSheetTable(tab = "Grants")` has the columns
+`Username, Key, Expires, Granted by, Created, ID`.
+
+### Quiz and QuizEditor
+
+`"use client"`. A question is `{ id, prompt, kind: "text" | "choice", options?,
+answer? }`; `answer` is the expected answer, left out for an open question.
+`Quiz` shows the questions as a numbered list (a text field, or one radio button
+per option; empty options are left out) and hands every answer, by question id,
+to `onSubmit` (throw an `Error` to show its message). With `showResult`, a
+successful submit marks the questions that have an expected answer as right or
+not and shows "3 of 4 right"; changing an answer takes the marks away again.
+
+| Prop | Type | Default |
+|---|---|---|
+| `questions` | `QuizQuestion[]` | required |
+| `initialAnswers` | `Record<string, string>` by question id | `{}` |
+| `onSubmit` | `(answers) => Promise<void> \| void` | required |
+| `showResult` | `boolean` | `false` |
+| `texts` | every label (see `QuizTexts`) | English defaults |
+| `className` | `string` | none |
+
+`QuizEditor` is controlled (`value`, `onChange`, `texts`, `className`): add,
+change, move and remove questions (removing a filled-in one asks first), switch
+between typed and choice, edit the options and pick the expected answer.
+Renaming the option that is the expected answer renames the answer too.
+
+`scoreQuiz(questions, answers)` returns `{ correct, total, results }`: `total`
+counts the questions with an expected answer, `results[id]` is `true`, `false`
+or `null` (open question). Answers are compared with `normaliseAnswer`: no
+case, no spaces at the ends, runs of spaces and line breaks as one space. The
+same function on the server gives the same score.
+
+### YouTubePlayer and LessonPlaylist
+
+`YouTubePlayer` shows one video in a 16:9 box through YouTube's
+privacy-enhanced embed (`https://www.youtube-nocookie.com/embed/<id>`, no
+cookies until the video plays), loaded when it comes near the screen. Props:
+`video` (an id or any YouTube link), `title` (the player's accessible name),
+`start` (seconds), `texts` (`invalid`), `className`. A link that is not a
+YouTube video shows a short message instead of the player.
+
+The videos must be **unlisted** on YouTube, not private: a private video only
+plays for the YouTube accounts it is shared with, so everyone else sees an
+error. An unlisted video plays for anyone with the link and is not listed in
+search or on the channel, so the page itself decides who sees the player. A
+site with a Content Security Policy must allow
+`frame-src https://www.youtube-nocookie.com`.
+
+`LessonPlaylist` (`"use client"`) is the list of a course's parts for a column
+next to the player: `items` (`{ id, title, kind: "video" | "reading",
+duration? }[]`), `activeId`, `onSelect(id)`, `texts` (`label`, `video`,
+`reading`, `empty`), `className`. Every part is a button; the arrow keys, Home
+and End move between them, and the open one has `aria-current`.
+
+```tsx
+<div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 24 }}>
+  <div>
+    <YouTubePlayer video={lesson.youtube} title={lesson.title} />
+    <NoteEditor value={note} onChange={saveNote} />
+  </div>
+  <LessonPlaylist items={lessons} activeId={lesson.id} onSelect={open} />
+</div>
+```
+
+`youtubeIdFrom(urlOrId)` returns the 11-character id of a watch link
+(`youtube.com/watch?v=`, also `m.` and `music.`), a `youtu.be/` link, an
+`/embed/`, `/shorts/`, `/live/` or `/v/` link, or a plain id, and `""` for
+anything else. `youtubeEmbedUrl(id, { start })` builds the embed address.
+
 ## tools/cut-frame-interior.mjs
 
 Makes the solid inside of a frame image (wreath, oval, card) transparent,
@@ -1153,13 +1295,14 @@ npm run check      # tsc --noEmit + the tests below
 - `tests/smoke.tsx`: server-renders every component once;
 - `tests/server.ts`: permissions, login and sessions, the list handlers with
   history and trash, and the task, Pinterest and Figma helpers;
-- `tests/panel.ts`: the 0.3.0 and 0.4.0 logic: notes (the document check and the
+- `tests/panel.ts`: the 0.3.0, 0.4.0 and 0.5.0 logic: notes (the document check and the
   handlers), picture sizes, the pyramid layers, the month calendar, search,
   notifications, per-person prices, links, the menu tree, the calendar feed and
   its token, the account and permission rules, the trash and board item
   handlers, the link preview (address table, refused addresses, page parsing;
   never the real network), the wishlist helpers and handlers (who sees which
-  category), and the Google Sheets layouts of the new lists;
+  category), the grants (deadlines, the endpoint), quiz scoring, YouTube links,
+  and the Google Sheets layouts of the new lists;
 - `tests/storage-contract.ts`: the same storage contract on every backend
   (memory, JSON file, Google Sheets with a fake client, DynamoDB with a fake
   client in both key layouts), and the notes, board item, account and wishlist

@@ -1,20 +1,21 @@
 Check this file before building anything new.
 
-Everything in the library, by area: the components, hooks, helpers and server utilities of version 0.4.0.
+Everything in the library, by area: the components, hooks, helpers and server utilities of version 0.5.0.
 Import paths start with `anhel-frontend-library`; every browser-safe export is also available from the package root.
 Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only available from its own `server/...` path.
 
 **Status**
 
 - `in library`: it is in the library as it was added.
-- `extended`: it was in the library before and was extended or fixed when the 0.3.0 or 0.4.0 pieces were added.
+- `extended`: it was in the library before and was extended or fixed when the 0.3.0, 0.4.0 or 0.5.0 pieces were added.
 - `not extracted`: it exists in the source projects and is not in the library (see the last section).
 
 **Source projects**
 
 - `wedding`: `angela-simon-wedding` (the wedding site and its planning panel).
 - `portfolio`: `wedding-panel-portfolio` (the static portfolio page of that project).
-- Versions: 0.1.0, 0.2.0 and 0.3.0 are the earlier extractions, 0.4.0 is the latest.
+- `library`: written for the library itself, not taken from a project (the 0.5.0 members' area pieces).
+- Versions: 0.1.0, 0.2.0, 0.3.0 and 0.4.0 are the earlier extractions, 0.5.0 is the latest.
 
 ## Login and permissions
 
@@ -34,6 +35,8 @@ Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only
 | `createPermissionsHandlers` | `anhel-frontend-library/server/accounts` | Permissions endpoint: GET without secret permissions, PUT by the admin role only, history line | `model`, `getSession`, `canView`, `loadSaved`, `save`, `onChanged`, `history`, `messages` | wedding: `app/api/panel/permissions/route.ts` | in library (0.3.0) |
 | `GroupedNav`, `visibleNavTree`, `firstNavPage`, `navPageTitle`, `allNavPages`, `isNavGroup` | `anhel-frontend-library/grouped-nav` | Side menu of pages and groups of pages, each with a permission key; only allowed pages shown; where a person lands | `tree`, `access`, `active`, `onSelect`, `label` | wedding: `NAV_TREE`, `visibleTree`, `firstPage` in `components/panel/PanelApp.tsx` | in library (0.3.0) |
 | `RolePreview`, `roleCanOpen`, `isPreviewGroup` | `anhel-frontend-library/role-preview` | "Log in as…": a role picker and the menu as that role sees it, with a story and what it can also do | `roles`, `menu`, `extraMenu`, `initialRoleId`, `texts` | portfolio: `script.js`, `index.html`, `styles.css` | in library (0.3.0) |
+| `isGrantActive`, `activeGrantsFor`, `hasGrant`, `daysLeft`, `isGrantDate`, `Grant` | `anhel-frontend-library/server/grants` | Per-person access to one key (a course, a lesson) with an optional deadline, on top of the roles; the deadline day is still active, a deadline that is not a date counts as expired (pure, no React or Node) | `hasGrant(grants, username, key, today)`, `daysLeft(grant, today)` | library (written for 0.5.0) | in library (0.5.0) |
+| `createGrantHandlers` | `anhel-frontend-library/server/grants` | Grants endpoint: GET (every grant for a manager, own active grants for anyone else), POST give or change a deadline, DELETE; managers only for changes; history lines. On any `ListStorage` | `storage`, `getSession`, `canManage`, `listName`, `history`, `today`, `messages`, `logError` | library (written for 0.5.0) | in library (0.5.0) |
 
 ## Tasks and storage
 
@@ -52,6 +55,7 @@ Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only
 | `taskSheetTable`, `trashSheetTable`, `historySheetTable`, `cell`, `isYes`, `toNumber` | `anhel-frontend-library/server/storage/google-sheets` | Sheet layouts of tasks, trash and history, and forgiving cell readers | `taskSheetTable(tab)` | wedding: `lib/panel/tables.ts` | in library (0.2.0) |
 | `noteSheetTable`, `boardItemSheetTable`, `accountSheetTable` | `anhel-frontend-library/server/storage/google-sheets` | Sheet layouts of notes, board items and stored accounts; long text is split over cells to the right | `noteSheetTable(tab)`, `boardItemSheetTable(tab, types)`, `accountSheetTable(parseRoles, tab)` | wedding: `lib/panel/tables.ts` | in library (0.3.0) |
 | `wishlistSheetTable` | `anhel-frontend-library/server/storage/google-sheets` | Sheet layout of a wishlist: `Category, Title, Description, Link, Price, Picture, ID`; a category typed in any case reads as its key; a link or picture that is not a web address reads as empty | `wishlistSheetTable(tab, categoryKeys)` | wedding: `favorsTable` in `lib/panel/tables.ts` | in library (0.4.0) |
+| `grantSheetTable` | `anhel-frontend-library/server/storage/google-sheets` | Sheet layout of the grants: `Username, Key, Expires, Granted by, Created, ID`; a deadline typed by hand reads as YYYY-MM-DD, one that is not a date is kept (and so counts as expired) | `grantSheetTable(tab)` | library (written for 0.5.0) | in library (0.5.0) |
 | `createDynamoDbStorage` | `anhel-frontend-library/server/storage/dynamodb` | DynamoDB backend (Query or Scan layout, batched writes with retries) | `tableName`, `region`, `client`, `keySchema` | library (written for 0.2.0) | in library (0.2.0) |
 | `selectStorage`, `newId` | `anhel-frontend-library/server/storage` | Picks a backend by name from a setting; short random ids | `selectStorage(source, factories, fallback)` | wedding: `lib/panel/store.ts`, `tables.ts` | in library (0.2.0) |
 
@@ -64,7 +68,9 @@ Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only
 | `pinterestLink`, `isEmbeddableBoard`, `cleanTags`, `cleanBoard`, `tagCounts`, `boardsWithTag` | `anhel-frontend-library/pinterest-boards` | Pure helpers for Pinterest links and tags; `cleanBoard` is the list endpoint's `clean` (also exported from `server/lists`) | `cleanBoard(input, { fallbackTitle })` | wedding: `lib/panel/pinterest.ts`, `inspirationTags.ts` | in library (0.2.0) |
 | `FigmaBoard`, `isFigmaLink`, `figmaEmbedUrl` | `anhel-frontend-library/figma-board` | A shared Figma or FigJam file embedded, with an "Open" link; link checks. `BoardOverview` reuses the helpers | `link`, `title`, `description`, `height`, `texts` | wedding: `components/panel/FigmaBoard.tsx`, `lib/panel/figma.ts` | in library (0.2.0) |
 | `NotesPad` | `anhel-frontend-library/notes-pad` | Notes list and editor: text, drawing, pictures, stickers; autosave, share or copy as text; reuses `useConfirm` and `shrinkPicture` | `endpoint`, `colours`, `stickers`, `maxChars`, `saveDelayMs`, `locale`, `texts` | wedding: `components/panel/NotesPanel.tsx` | in library (0.3.0) |
-| `DrawPad` | `anhel-frontend-library/notes-pad` | Drawing pad kept as strokes (pen, colours, eraser, undo) | `strokes`, `onChange`, `colours`, `sizes`, `texts` | wedding: `components/panel/DrawPad.tsx` | in library (0.3.0) |
+| `DrawPad` | `anhel-frontend-library/notes-pad` | Drawing pad kept as strokes (pen, colours, eraser, undo); mouse, pen and touch through pointer events, one stroke at a time (a second finger and other mouse buttons are ignored) | `strokes`, `onChange`, `colours`, `sizes`, `texts` | wedding: `components/panel/DrawPad.tsx` | extended (one pointer at a time in 0.5.0) |
+| `NoteEditor` | `anhel-frontend-library/notes-pad` | The blocks of one note on their own (text, drawing, pictures, stickers; move, remove, toolbar), controlled and without network, so a page saves the note itself. `NotesPad` uses it inside its editor | `value`, `onChange`, `stickers`, `maxChars`, `texts`, `drawTexts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `NoteView` | `anhel-frontend-library/notes-pad` | A note shown read-only: text with its line breaks, drawings as SVG from the strokes at the pad's 1000 x 600 shape (eraser strokes as masks), pictures, stickers; no controls. No state, also renders on the server | `value`, `title`, `colour`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
 | `cleanNoteDoc`, `previewOf`, `noteToPlainText`, `noteFillPercent`, `NOTE_COLOURS`, `DEFAULT_STICKERS`, `MAX_NOTE_CHARS` | `anhel-frontend-library/notes-pad` | The note document (types, constants) and its pure checks; `cleanNoteDoc` is what the notes handlers use | `cleanNoteDoc(input, { maxChars, maxBlocks })` | wedding: `lib/panel/notes.ts` and `NotesPanel.tsx` | in library (0.3.0) |
 | `BoardOverview` | `anhel-frontend-library/board-overview` | Links, tickets, pictures and files kept in categories; a Figma link opens inline; shows its children below. Reuses `useSharedList`, `useConfirm`, `shrinkPicture`, the Figma helpers | `endpoint`, `types`, `initialItems`, `describeLink`, `locale`, `children`, `texts` | wedding: `components/panel/BoardOverview.tsx` | in library (0.3.0) |
 | `groupItemsByCategory`, `categoriesOf`, `linkSource`, `formatItemDate`, `emptyBoardItem`, `DEFAULT_BOARD_ITEM_TYPES` | `anhel-frontend-library/board-overview` | Pure helpers and the `BoardItem` type of the overview | `groupItemsByCategory(items, unsortedName)` | wedding: `BoardOverview.tsx`, `lib/panel/types.ts` | in library (0.3.0) |
@@ -73,6 +79,17 @@ Server-only code (it uses `node:crypto`, the file system or a cloud SDK) is only
 | `Wishlist`, `emptyWishlistItem`, `fillFromPreview`, `itemsOfCategory`, `prepareWishlistItem`, `WISHLIST_LIMITS` | `anhel-frontend-library/wishlist` | Wishlist with a tab per category, cards (title, description, link opening in a new tab, price, picture), an add and edit form, and a removal that asks first. Pasting a link fills the empty fields from `fetchPreview`; everything can be typed by hand; the category of an item can be changed on edit. Reuses `useConfirm`, `asWebAddress` and `hostOf` | `categories`, `items`, `onSave`, `onRemove`, `fetchPreview`, `error`, `icon`, `texts`, `className` | wedding: `components/panel/FavorsPanel.tsx`, `Favor` in `lib/panel/types.ts` | in library (0.4.0) |
 | `PhoneFrame` | `anhel-frontend-library/phone-tour` | Phone-shaped frame around a screenshot or any content | `src`, `alt`, `children`, `width`, `aspectRatio`, `renderImage` | portfolio: `.phone` in `styles.css` | in library (0.3.0) |
 | `PhoneTour` | `anhel-frontend-library/phone-tour` | Swipeable row of framed screenshots with captions; arrows on a computer | `screens`, `screenWidth`, `aspectRatio`, `gap`, `edge`, `label`, `renderImage` | portfolio: `index.html`, `styles.css`, `script.js` | in library (0.3.0) |
+
+## Lessons and quizzes
+
+| Name | Import path | What it does | Main props or options | Came from | Status |
+|---|---|---|---|---|---|
+| `Quiz` | `anhel-frontend-library/quiz` | A numbered list of typed and multiple-choice questions with one submit button; answers go to `onSubmit`; with `showResult`, the answers with an expected one are marked right or not (no case, extra spaces ignored) and the score is shown | `questions`, `initialAnswers`, `onSubmit`, `showResult`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `QuizEditor` | `anhel-frontend-library/quiz` | Controlled editor of a quiz's questions: add, change, move, remove (asks first); typed or choice, options, optional expected answer. Reuses `useConfirm` | `value`, `onChange`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `scoreQuiz`, `isAnswerCorrect`, `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions`, `emptyQuizQuestion` | `anhel-frontend-library/quiz` | Pure quiz helpers and the `QuizQuestion` type; open questions (no expected answer) are not counted | `scoreQuiz(questions, answers)` | library (written for 0.5.0) | in library (0.5.0) |
+| `YouTubePlayer` | `anhel-frontend-library/youtube-lesson` | One YouTube video in a 16:9 box through the privacy-enhanced embed (youtube-nocookie.com), loaded lazily, with a title; a message instead of the player for a bad link. The video must be "unlisted" on YouTube (a private one plays for nobody else) | `video`, `title`, `start`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `LessonPlaylist` | `anhel-frontend-library/youtube-lesson` | Numbered list of a course's videos and readings for a column next to the player; the open one highlighted (`aria-current`); buttons, plus arrow keys, Home and End | `items`, `activeId`, `onSelect`, `texts`, `className` | library (written for 0.5.0) | in library (0.5.0) |
+| `youtubeIdFrom`, `youtubeEmbedUrl` | `anhel-frontend-library/youtube-lesson` | The video id of a watch, youtu.be, /embed/, /shorts/ or /live/ link or of a plain id ("" when it is none); the nocookie embed address | `youtubeIdFrom(urlOrId)`, `youtubeEmbedUrl(id, { start })` | library (written for 0.5.0) | in library (0.5.0) |
 
 ## Calendar and search
 
@@ -128,7 +145,7 @@ Server-only helpers that belong to other areas are listed there: the auth, accou
 | `shrinkPicture`, `scaledSize`, `nextAttempt` | `anhel-frontend-library/shrink-picture` | Scales a photo down to a small JPEG data URL, trying smaller until it is short enough (browser only) | `shrinkPicture(file, { longestSide, quality, maxChars, attempts })` | wedding: `components/panel/shrinkPicture.ts` | in library (0.3.0) |
 | `useDismiss` | `anhel-frontend-library/use-dismiss` | Calls a function on a mouse press outside an element or on Escape, for dropdowns | `useDismiss(open, ref, onClose)` | wedding: account menu in `PanelApp.tsx` | in library (0.3.0) |
 | `RenderImage`, `ImageRenderProps` | `anhel-frontend-library` | The type of the `renderImage` prop that swaps `<img>` for `next/image` | `src`, `alt`, `className`, `sizes`, `priority` | library (0.1.0) | in library (0.1.0) |
-| Panel icons | internal: `src/icons.tsx` (not exported) | Small line icons drawn in the text colour, used by the components | `size`, `strokeWidth` | wedding: `components/panel/icons.tsx` | extended (19 icons added in 0.3.0) |
+| Panel icons | internal: `src/icons.tsx` (not exported) | Small line icons drawn in the text colour, used by the components | `size`, `strokeWidth` | wedding: `components/panel/icons.tsx` | extended (19 icons added in 0.3.0, `Play` and `BookOpen` in 0.5.0) |
 | `tools/cut-frame-interior.mjs` | script, not an import | Cuts a frame image's solid inside to transparent and suggests the matching clip-path | `--sample`, `--min-bright` and others | wedding: the frame-cutting script for the photo slider | in library (0.1.0) |
 | `assets/*` | `anhel-frontend-library/assets/*` | Example images: `floral-frame.png`, `heart-gold.png`, `rings-gold.png` | none | wedding: images of the wedding site | in library (0.1.0) |
 

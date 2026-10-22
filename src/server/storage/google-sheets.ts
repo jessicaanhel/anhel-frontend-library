@@ -185,6 +185,7 @@ export {
   accountSheetTable,
   boardItemSheetTable,
   cell,
+  grantSheetTable,
   historySheetTable,
   isYes,
   noteSheetTable,

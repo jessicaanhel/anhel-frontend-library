@@ -1,0 +1,118 @@
+/* Shared by YouTubePlayer and LessonPlaylist. */
+
+/* ---- the player ---- */
+
+.player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+}
+
+.player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.invalid {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: var(--surface, #f1efe9);
+  color: var(--danger, #a8644c);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ---- the playlist ---- */
+
+.playlist {
+  color: var(--ink, #2d302b);
+}
+
+.items {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft, #83867d);
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--surface, #f1efe9);
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--accent, #657760);
+  outline-offset: -2px;
+}
+
+.item.active {
+  background: var(--nav-active-bg, #f1eadc);
+  color: var(--nav-active-ink, #3f503d);
+}
+
+.number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface, #f1efe9);
+  color: var(--accent, #4d5f49);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.active .number {
+  background: var(--accent, #4d5f49);
+  color: #fff;
+}
+
+.itemText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.itemTitle {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.itemMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--ink-soft, #83867d);
+}

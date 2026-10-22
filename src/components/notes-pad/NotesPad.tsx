@@ -7,20 +7,11 @@
 // ============================================================================
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowUp, ImageIcon, Pencil, Plus, Share, Smile, Trash, TypeIcon, X } from "../../icons";
-import { shrinkPicture } from "../../shrinkPicture";
+import { ArrowLeft, Plus, Share, Trash } from "../../icons";
 import { useConfirm } from "../confirm-dialog";
-import DrawPad, { type DrawPadTexts } from "./DrawPad";
-import {
-  DEFAULT_STICKERS,
-  MAX_NOTE_CHARS,
-  NOTE_COLOURS,
-  noteFillPercent,
-  noteToPlainText,
-  type Block,
-  type NoteDoc,
-  type NoteSummary,
-} from "./notes";
+import type { DrawPadTexts } from "./DrawPad";
+import NoteEditor, { newTextBlock } from "./NoteEditor";
+import { DEFAULT_STICKERS, MAX_NOTE_CHARS, NOTE_COLOURS, noteToPlainText, type Block, type NoteDoc, type NoteSummary } from "./notes";
 import styles from "./NotesPad.module.css";
 
 // Adapted from angela-simon-wedding/components/panel/NotesPanel.tsx.
@@ -33,6 +24,8 @@ import styles from "./NotesPad.module.css";
 // A note is a list of blocks (text, a drawing pad, a picture, a sticker) that
 // can be moved up and down. It saves by itself a moment after every change.
 // Pictures are shrunk in the browser first, and a note has a size limit.
+// The blocks themselves are edited by NoteEditor, which a page can also use
+// on its own (without the list and the endpoint).
 
 export type NotesPadTexts = {
   heading: string;
@@ -159,20 +152,6 @@ type EditorProps = Required<Pick<NotesPadProps, "endpoint" | "colours" | "sticke
   onClose: () => void;
 };
 
-const blockId = () => Math.random().toString(36).slice(2, 10);
-const newTextBlock = (): Block => ({ id: blockId(), type: "text", text: "" });
-
-// A textarea that is always as tall as its text (no scrollbar inside the note).
-function AutoTextarea({ value, onChange, placeholder }: { value: string; onChange: (value: string) => void; placeholder: string }) {
-  const field = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => {
-    if (!field.current) return;
-    field.current.style.height = "auto";
-    field.current.style.height = `${field.current.scrollHeight}px`;
-  }, [value]);
-  return <textarea ref={field} className={styles.noteText} value={value} placeholder={placeholder} rows={3} onChange={(event) => onChange(event.target.value)} />;
-}
-
 function Editor({ endpoint, noteId, colours, stickers, maxChars, saveDelayMs, texts: t, drawTexts, onClose }: EditorProps) {
   const [id, setId] = useState<string | null>(noteId);
   const [title, setTitle] = useState("");
@@ -181,8 +160,6 @@ function Editor({ endpoint, noteId, colours, stickers, maxChars, saveDelayMs, te
   const [loaded, setLoaded] = useState(noteId === null);
   const [saveState, setSaveState] = useState<"saved" | "saving" | "error">("saved");
   const [message, setMessage] = useState("");
-  const [panel, setPanel] = useState<"" | "stickers" | "link">("");
-  const files = useRef<HTMLInputElement>(null);
   const { ask, dialog } = useConfirm();
 
   // What is on screen, for the save that runs after a pause.
@@ -261,35 +238,6 @@ function Editor({ endpoint, noteId, colours, stickers, maxChars, saveDelayMs, te
     update();
   }, []);
 
-  const add = (block: Block) => change(() => setBlocks((current) => [...current, block]));
-  const patch = (idToChange: string, next: Partial<Block>) =>
-    change(() => setBlocks((current) => current.map((block) => (block.id === idToChange ? ({ ...block, ...next } as Block) : block))));
-  const move = (index: number, direction: -1 | 1) =>
-    change(() =>
-      setBlocks((current) => {
-        const target = index + direction;
-        if (target < 0 || target >= current.length) return current;
-        const next = [...current];
-        [next[index], next[target]] = [next[target], next[index]];
-        return next;
-      })
-    );
-  const remove = async (block: Block) => {
-    const empty = block.type === "text" && !block.text.trim();
-    if (empty || (await ask(t.confirmRemoveBlock, { confirmLabel: t.confirmRemoveBlockYes, note: t.deleteNote }))) {
-      change(() => setBlocks((current) => current.filter((candidate) => candidate.id !== block.id)));
-    }
-  };
-
-  async function addPicture(file: File | undefined) {
-    if (!file) return;
-    try {
-      add({ id: blockId(), type: "image", src: await shrinkPicture(file) });
-    } catch {
-      setMessage(t.pictureFailed);
-    }
-  }
-
   // On a phone this opens the share sheet (the app can then save a copy into
   // a notes app: there is no way to keep the two in sync, so it is a copy).
   // Elsewhere the text is copied to the clipboard.
@@ -336,8 +284,6 @@ function Editor({ endpoint, noteId, colours, stickers, maxChars, saveDelayMs, te
     }
   }
 
-  const fillPercent = noteFillPercent(blocks, maxChars);
-
   return (
     <div className={styles.editor} style={{ background: colour }}>
       {dialog}
@@ -372,96 +318,15 @@ function Editor({ endpoint, noteId, colours, stickers, maxChars, saveDelayMs, te
         <>
           <input className={styles.title} value={title} placeholder={t.titlePlaceholder} maxLength={100} onChange={(event) => change(() => setTitle(event.target.value))} />
 
-          <div className={styles.blocks}>
-            {blocks.map((block, index) => (
-              <div className={styles.block} key={block.id}>
-                <div className={styles.blockControls}>
-                  <button type="button" aria-label={t.moveUp} disabled={index === 0} onClick={() => move(index, -1)}>
-                    <ArrowUp size={13} />
-                  </button>
-                  <button type="button" aria-label={t.moveDown} disabled={index === blocks.length - 1} onClick={() => move(index, 1)}>
-                    <ArrowDown size={13} />
-                  </button>
-                  <button type="button" aria-label={t.removeBlock} onClick={() => remove(block)}>
-                    <X size={13} />
-                  </button>
-                </div>
-
-                {block.type === "text" && <AutoTextarea value={block.text} placeholder={t.textPlaceholder} onChange={(text) => patch(block.id, { text })} />}
-                {block.type === "draw" && <DrawPad strokes={block.strokes} texts={drawTexts} onChange={(strokes) => patch(block.id, { strokes })} />}
-                {block.type === "image" && (
-                  // A plain <img>: the source is a data URL or a link, which an image optimiser can't help with.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img className={styles.image} src={block.src} alt="" />
-                )}
-                {block.type === "sticker" && <div className={styles.sticker}>{block.emoji}</div>}
-              </div>
-            ))}
-          </div>
-
-          {panel === "stickers" && (
-            <div className={styles.stickerGrid} role="group" aria-label={t.stickers}>
-              {stickers.map((emoji) => (
-                <button
-                  type="button"
-                  key={emoji}
-                  onClick={() => {
-                    add({ id: blockId(), type: "sticker", emoji });
-                    setPanel("");
-                  }}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          )}
-          {panel === "link" && (
-            <form
-              className={styles.linkForm}
-              onSubmit={(event) => {
-                event.preventDefault();
-                const src = String(new FormData(event.currentTarget).get("src") ?? "").trim();
-                if (/^https:\/\/\S+$/.test(src)) add({ id: blockId(), type: "image", src });
-                else setMessage(t.pictureLinkInvalid);
-                setPanel("");
-              }}
-            >
-              <input name="src" placeholder={t.pictureLinkPlaceholder} autoFocus />
-              <button className={styles.primaryButton} type="submit">
-                {t.pictureLinkAdd}
-              </button>
-            </form>
-          )}
           {message && <p className={styles.error}>{message}</p>}
-
-          <div className={styles.toolbar}>
-            <button type="button" onClick={() => add(newTextBlock())}>
-              <TypeIcon size={16} /> {t.addText}
-            </button>
-            <button type="button" onClick={() => add({ id: blockId(), type: "draw", strokes: [] })}>
-              <Pencil size={16} /> {t.addDrawing}
-            </button>
-            <button type="button" onClick={() => files.current?.click()}>
-              <ImageIcon size={16} /> {t.addPicture}
-            </button>
-            <button type="button" onClick={() => setPanel(panel === "link" ? "" : "link")}>
-              {t.addLink}
-            </button>
-            <button type="button" onClick={() => setPanel(panel === "stickers" ? "" : "stickers")}>
-              <Smile size={16} /> {t.addSticker}
-            </button>
-            <input
-              ref={files}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(event) => {
-                addPicture(event.target.files?.[0]);
-                event.target.value = "";
-              }}
-            />
-          </div>
-          <p className={styles.size}>{fillPercent > 80 ? t.almostFull(fillPercent) : ""}</p>
+          <NoteEditor
+            value={{ blocks }}
+            onChange={(doc) => change(() => setBlocks(doc.blocks))}
+            stickers={stickers}
+            maxChars={maxChars}
+            texts={t}
+            drawTexts={drawTexts}
+          />
         </>
       )}
     </div>

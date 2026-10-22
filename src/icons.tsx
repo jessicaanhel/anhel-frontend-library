@@ -64,3 +64,5 @@ export const Share = createIcon("M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l
 export const Smile = createIcon("M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01");
 export const TypeIcon = createIcon("M4 7V4h16v3M9 20h6M12 4v16");
 export const Undo = createIcon("M3 7v6h6M3 13a9 9 0 1 0 3-7");
+export const BookOpen = createIcon("M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z");
+export const Play = createIcon("M7 4.5v15l12-7.5z");

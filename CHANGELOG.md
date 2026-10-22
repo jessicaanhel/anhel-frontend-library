@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.5.0 (2026-10-22)
+
+Pieces for a members' area (lessons, videos, notes and quizzes behind a login), written for the library rather than
+taken from another project. [CATALOG.md](CATALOG.md) lists them.
+
+- `server/grants`: per-person access to one key with an optional deadline, on top of the roles. The pure helpers
+  `isGrantActive`, `activeGrantsFor`, `hasGrant`, `daysLeft` and `isGrantDate` (the deadline day is still active; a
+  deadline that is not a date counts as expired), and `createGrantHandlers` (GET, POST, DELETE; only managers see
+  every grant and change them). `grantSheetTable` is the Google Sheets layout (`Username, Key, Expires, Granted by,
+  Created, ID`).
+- `NoteView` (in `notes-pad`): a note document shown read-only, styled like `NotesPad`. Text keeps its line breaks,
+  drawings are drawn as SVG from the saved strokes (an eraser stroke becomes a mask over what was drawn before it,
+  like on the canvas), pictures and stickers are shown, empty text blocks and empty drawings are left out.
+- `NoteEditor` (in `notes-pad`): the block editor of `NotesPad` taken out as its own controlled component
+  (`value`, `onChange`; no title, colour, list or endpoint), so a page can put one note under a video and save it
+  itself. `NotesPad` now uses it; its behaviour is the same, except that a save error is shown above the blocks.
+- `DrawPad` draws one stroke at a time: while a stroke is going on, a second finger is ignored (before, it started a
+  new stroke and the first one was lost), as are the right and middle mouse buttons; a mouse drag no longer selects
+  the text around the pad, and a stroke also ends when the browser takes the pointer away.
+- `quiz`: `Quiz` (typed and multiple-choice questions, one submit through `onSubmit`, optional right/wrong marks and
+  a score), `QuizEditor` (controlled editor of the questions) and the pure `scoreQuiz` with `isAnswerCorrect`,
+  `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions` and `emptyQuizQuestion`. Answers are compared without
+  case, with spaces at the ends left out and runs of spaces counted as one.
+- `youtube-lesson`: `YouTubePlayer` (the privacy-enhanced embed on youtube-nocookie.com, 16:9, lazy, with a title;
+  the video has to be "unlisted" on YouTube, because a private video plays for nobody else), `LessonPlaylist` (the
+  videos and readings of a course for a column next to the player, keyboard friendly) and the pure `youtubeIdFrom`
+  and `youtubeEmbedUrl`. Two icons were added for the playlist (`Play`, `BookOpen`).
+
+Also changed:
+
+- The text fields of a note use the page's font (a textarea does not take it by itself, so they were often
+  monospace).
+- New entry points: `server/grants`, `quiz` and `youtube-lesson`; `notes-pad` also exports `NoteEditor` and
+  `NoteView`, and `server/storage/google-sheets` exports `grantSheetTable`.
 ## 0.4.0 (2026-10-22)
 
 The wishlist of the wedding site's planning panel ("Wedding favors"), extracted from `angela-simon-wedding` (branch
