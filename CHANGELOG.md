@@ -23,6 +23,10 @@ taken from another project. [CATALOG.md](CATALOG.md) lists them.
   a score), `QuizEditor` (controlled editor of the questions) and the pure `scoreQuiz` with `isAnswerCorrect`,
   `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions` and `emptyQuizQuestion`. Answers are compared without
   case, with spaces at the ends left out and runs of spaces counted as one.
+- `youtube-lesson`: `YouTubePlayer` (the privacy-enhanced embed on youtube-nocookie.com, 16:9, lazy, with a title;
+  the video has to be "unlisted" on YouTube, because a private video plays for nobody else), `LessonPlaylist` (the
+  videos and readings of a course for a column next to the player, keyboard friendly) and the pure `youtubeIdFrom`
+  and `youtubeEmbedUrl`. Two icons were added for the playlist (`Play`, `BookOpen`).
 ## 0.4.0 (2026-10-22)
 
 The wishlist of the wedding site's planning panel ("Wedding favors"), extracted from `angela-simon-wedding` (branch

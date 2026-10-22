@@ -32,6 +32,7 @@ Everything in the library, with import paths, origins and status, is listed in
 | [`shrinkPicture`, `useDismiss`](#utilities) | the notes and board pictures; the panel's dropdowns | Picture shrinking in the browser; closing a dropdown on an outside click | React 18+ |
 | [Grants](#grants) | not on the wedding site (written for 0.5.0, for a members' area) | Per-person access to a course or lesson with an optional deadline, and its endpoint | Node 18+ |
 | [`Quiz`, `QuizEditor`](#quiz-and-quizeditor) | not on the wedding site (written for 0.5.0, for a members' area) | A quiz to fill in with optional right/wrong marks, and the editor of its questions | React 18+ |
+| [`YouTubePlayer`, `LessonPlaylist`](#youtubeplayer-and-lessonplaylist) | not on the wedding site (written for 0.5.0, for a members' area) | A privacy-enhanced YouTube player and the list of a course's videos and readings | React 18+ |
 | [`tools/cut-frame-interior.mjs`](#toolscut-frame-interiormjs) | the cutting of the floral frame's inside for that photo slider | Cuts a frame image's solid inside to transparent and suggests the matching clip-path | Node 18+, ffmpeg |
 
 All of them were extracted from the `angela-simon-wedding` site (Next.js 16,
@@ -100,6 +101,7 @@ and is not re-exported from the root:
 | `anhel-frontend-library/link-chips` | `LinkChips`, `asWebAddress`, `hostOf`, `addLink` |
 | `anhel-frontend-library/per-person-price` | `PerPersonPrice`, `round2`, `perPersonTotal`, `effectiveGuestCount`, `withPerPersonTotals` |
 | `anhel-frontend-library/quiz` | `Quiz`, `QuizEditor`, `scoreQuiz`, `isAnswerCorrect`, `normaliseAnswer`, `hasExpectedAnswer`, `choiceOptions`, `emptyQuizQuestion`, the question and answer types |
+| `anhel-frontend-library/youtube-lesson` | `YouTubePlayer`, `LessonPlaylist`, `youtubeIdFrom`, `youtubeEmbedUrl`, the playlist item type |
 | `anhel-frontend-library/wishlist` | `Wishlist`, `WISHLIST_LIMITS`, `emptyWishlistItem`, `fillFromPreview`, `itemsOfCategory`, `prepareWishlistItem`, the item, category and preview types |
 | `anhel-frontend-library/grouped-nav` | `GroupedNav`, `visibleNavTree`, `firstNavPage`, `navPageTitle`, `allNavPages` |
 | `anhel-frontend-library/trash-panel` | `TrashPanel`, `trashDaysLeft` |
@@ -1217,6 +1219,43 @@ counts the questions with an expected answer, `results[id]` is `true`, `false`
 or `null` (open question). Answers are compared with `normaliseAnswer`: no
 case, no spaces at the ends, runs of spaces and line breaks as one space. The
 same function on the server gives the same score.
+
+### YouTubePlayer and LessonPlaylist
+
+`YouTubePlayer` shows one video in a 16:9 box through YouTube's
+privacy-enhanced embed (`https://www.youtube-nocookie.com/embed/<id>`, no
+cookies until the video plays), loaded when it comes near the screen. Props:
+`video` (an id or any YouTube link), `title` (the player's accessible name),
+`start` (seconds), `texts` (`invalid`), `className`. A link that is not a
+YouTube video shows a short message instead of the player.
+
+The videos must be **unlisted** on YouTube, not private: a private video only
+plays for the YouTube accounts it is shared with, so everyone else sees an
+error. An unlisted video plays for anyone with the link and is not listed in
+search or on the channel, so the page itself decides who sees the player. A
+site with a Content Security Policy must allow
+`frame-src https://www.youtube-nocookie.com`.
+
+`LessonPlaylist` (`"use client"`) is the list of a course's parts for a column
+next to the player: `items` (`{ id, title, kind: "video" | "reading",
+duration? }[]`), `activeId`, `onSelect(id)`, `texts` (`label`, `video`,
+`reading`, `empty`), `className`. Every part is a button; the arrow keys, Home
+and End move between them, and the open one has `aria-current`.
+
+```tsx
+<div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 24 }}>
+  <div>
+    <YouTubePlayer video={lesson.youtube} title={lesson.title} />
+    <NoteEditor value={note} onChange={saveNote} />
+  </div>
+  <LessonPlaylist items={lessons} activeId={lesson.id} onSelect={open} />
+</div>
+```
+
+`youtubeIdFrom(urlOrId)` returns the 11-character id of a watch link
+(`youtube.com/watch?v=`, also `m.` and `music.`), a `youtu.be/` link, an
+`/embed/`, `/shorts/`, `/live/` or `/v/` link, or a plain id, and `""` for
+anything else. `youtubeEmbedUrl(id, { start })` builds the embed address.
 
 ## tools/cut-frame-interior.mjs
 

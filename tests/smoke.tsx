@@ -13,6 +13,7 @@ import {
   FigmaBoard,
   FramedPhotoStack,
   GroupedNav,
+  LessonPlaylist,
   LinkChips,
   LoginForm,
   MiniCalendar,
@@ -39,6 +40,7 @@ import {
   TrashPanel,
   VideoEntry,
   Wishlist,
+  YouTubePlayer,
   createPermissionModel,
   emptyBoardItem,
   type NavNode,
@@ -559,6 +561,33 @@ const panelModel = createPermissionModel<PanelRole>({
   assert.equal(count(editor, 'aria-label="Remove this option"'), 3, "one remove button per option");
   assert.ok(editor.includes("None (open question)") && editor.includes('value="silence"'), "expected answers");
   results.push("Quiz + QuizEditor ok");
+}
+
+// YouTubePlayer: the privacy-enhanced embed, lazy, with a title; a message for a bad link.
+// LessonPlaylist: one button per part, the open one marked.
+{
+  const player = renderToString(<YouTubePlayer video="https://youtu.be/dQw4w9WgXcQ" title="Lesson 1" />);
+  assert.ok(player.includes('src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0"'), "nocookie embed");
+  assert.ok(player.includes('loading="lazy"') && player.includes('title="Lesson 1"') && player.includes("allowFullScreen"), "lazy, titled, full screen");
+  const bad = renderToString(<YouTubePlayer video="https://vimeo.com/1" title="x" texts={{ invalid: "Bad link" }} />);
+  assert.ok(bad.includes("Bad link") && !bad.includes("<iframe"), "no player for a bad link");
+
+  const playlist = renderToString(
+    <LessonPlaylist
+      items={[
+        { id: "a", title: "Welcome", kind: "video", duration: "3:10" },
+        { id: "b", title: "Read first", kind: "reading" },
+      ]}
+      activeId="b"
+      onSelect={() => {}}
+      texts={{ label: "Course" }}
+    />
+  );
+  assert.ok(playlist.includes('aria-label="Course"') && playlist.includes("Welcome") && playlist.includes("3:10"), "list, titles, duration");
+  assert.equal(count(playlist, "<button"), 2);
+  assert.equal(count(playlist, 'aria-current="true"'), 1, "one part is open");
+  assert.ok(playlist.indexOf('aria-current="true"') > playlist.indexOf("Welcome"), "the second part is the open one");
+  results.push("YouTubePlayer + LessonPlaylist ok");
 }
 
 console.log(results.join("\n"));

@@ -19,6 +19,7 @@ import { roleCanOpen, type RolePreviewRole } from "../src/components/role-previe
 import { searchSections } from "../src/components/search-dialog";
 import type { Task } from "../src/components/task-list";
 import { trashDaysLeft } from "../src/components/trash-panel";
+import { youtubeEmbedUrl, youtubeIdFrom } from "../src/components/youtube-lesson";
 import { WISHLIST_LIMITS, emptyWishlistItem, fillFromPreview, itemsOfCategory, prepareWishlistItem, type WishlistItem } from "../src/components/wishlist";
 import { createPermissionModel, type Permissions } from "../src/permissions";
 import { nextAttempt, scaledSize } from "../src/shrinkPicture";
@@ -1064,6 +1065,34 @@ const model = createPermissionModel<Role>({
   assert.deepEqual(choiceOptions(questions[1]), ["3", "4"], "empty options are not shown");
   assert.deepEqual(emptyQuizQuestion("choice").options, ["", ""]);
   results.push("quiz scoring ok");
+}
+
+// ---- YouTube links ----------------------------------------------------------------------------------------------------------
+
+{
+  const id = "dQw4w9WgXcQ";
+  for (const link of [
+    id,
+    ` ${id} `,
+    `https://www.youtube.com/watch?v=${id}`,
+    `https://youtube.com/watch?feature=share&v=${id}&t=42s`,
+    `https://m.youtube.com/watch?v=${id}`,
+    `https://youtu.be/${id}?si=abc&t=10`,
+    `youtu.be/${id}`,
+    `www.youtube.com/watch?v=${id}`,
+    `https://www.youtube.com/embed/${id}?start=5`,
+    `https://www.youtube-nocookie.com/embed/${id}`,
+    `https://www.youtube.com/shorts/${id}`,
+    `https://www.youtube.com/live/${id}`,
+  ]) {
+    assert.equal(youtubeIdFrom(link), id, link);
+  }
+  for (const bad of ["", "short", `https://vimeo.com/${id}`, `https://www.youtube.com/watch?v=tooShort`, "https://www.youtube.com/@channel", `https://notyoutube.com/watch?v=${id}`, `javascript:alert("${id}")`, `https://youtu.be/${id}extra`]) {
+    assert.equal(youtubeIdFrom(bad), "", `not a video: ${bad}`);
+  }
+  assert.equal(youtubeEmbedUrl(id), `https://www.youtube-nocookie.com/embed/${id}?rel=0`);
+  assert.equal(youtubeEmbedUrl(id, { start: 90.7 }), `https://www.youtube-nocookie.com/embed/${id}?rel=0&start=90`);
+  results.push("youtube links ok");
 }
 
 console.log(results.join("\n"));
